@@ -1,11 +1,16 @@
 {
   "branches": ["main"],
+  "verifyConditions": [
+    "@semantic-release/changelog",
+    "@semantic-release/github",
+    "@semantic-release/git"
+  ],
   "plugins": [
     "@semantic-release/commit-analyzer",
     "@semantic-release/release-notes-generator",
     ["@semantic-release/changelog", { "changelogFile": "CHANGELOG.md" }],
     ["@semantic-release/npm", { "npmPublish": true }],
-    "@semantic-release/github",
+    ["@semantic-release/github", { "labels": false, "failComment": false, "failTitle": false }],
     ["@semantic-release/git", { "assets": ["CHANGELOG.md", "package.json", "package-lock.json"] }]
   ]
 }
