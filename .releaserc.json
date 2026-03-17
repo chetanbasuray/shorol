@@ -1,10 +1,6 @@
 {
   "branches": ["main", { "name": "*", "prerelease": "pr", "channel": "pr" }],
-  "verifyConditions": [
-    "@semantic-release/changelog",
-    "@semantic-release/github",
-    "@semantic-release/git"
-  ],
+  "verifyConditions": ["@semantic-release/github"],
   "plugins": [
     "@semantic-release/commit-analyzer",
     "@semantic-release/release-notes-generator",
