@@ -41,6 +41,7 @@ jobs:
         with:
           node-version: 22.14.0
           cache: "npm"
+          registry-url: "https://registry.npmjs.org"
       - run: npm install -g npm@11.5.1
       - run: npm install
       - run: npm run build
@@ -48,4 +49,3 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           HUSKY: 0
-          NODE_AUTH_TOKEN: ""
