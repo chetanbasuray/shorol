@@ -61,6 +61,10 @@ const pattern = regex().literal("yes").orLiteral("no").toString();
 - [Code of Conduct](CODE_OF_CONDUCT.md)
 - [Feature Plan](FEATURES.md)
 
+## Release Process
+
+Releases are automated via GitHub Actions and semantic-release on merges to `main`.
+
 ## License
 
 MIT. See `LICENSE`.
