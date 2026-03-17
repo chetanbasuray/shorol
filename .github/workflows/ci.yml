@@ -45,6 +45,14 @@ jobs:
       - run: npm install -g npm@11.5.1
       - run: npm install
       - run: npm run build
+      - name: Debug OIDC
+        run: |
+          echo "OIDC_URL=$ACTIONS_ID_TOKEN_REQUEST_URL"
+          if [ -n "$ACTIONS_ID_TOKEN_REQUEST_TOKEN" ]; then
+            echo "OIDC_TOKEN_SET=yes"
+          else
+            echo "OIDC_TOKEN_SET=no"
+          fi
       - run: npm run release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
