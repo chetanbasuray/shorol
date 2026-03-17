@@ -99,6 +99,7 @@ export const slugRegex = slugBuilder().toRegExp();
 ## Release Process
 
 Releases are automated via GitHub Actions and semantic-release on merges to `main`.
+Use Conventional Commit titles (e.g., `feat:` or `fix:`) on merge commits to trigger releases.
 
 ## License
 
