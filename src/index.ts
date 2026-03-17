@@ -47,9 +47,17 @@ export class Builder {
     return this.tokens.length - 1;
   }
 
+  private getToken(index: number): string {
+    const token = this.tokens[index];
+    if (token === undefined) {
+      throw new Error("Missing token at index");
+    }
+    return token;
+  }
+
   private applyQuantifier(suffix: string): this {
     const index = this.requireLast();
-    const token = this.tokens[index];
+    const token = this.getToken(index);
     const grouped = needsQuantifierGrouping(token) ? `(?:${token})` : token;
     this.tokens[index] = `${grouped}${suffix}`;
     return this;
@@ -102,7 +110,7 @@ export class Builder {
 
   or(fn: BuildFn): this {
     const index = this.requireLast();
-    const left = this.tokens[index];
+    const left = this.getToken(index);
     const right = fn(new Builder()).toString();
     this.tokens[index] = `(?:${left}|${right})`;
     return this;
