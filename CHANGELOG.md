@@ -1,3 +1,10 @@
+## [1.1.2](https://github.com/chetanbasuray/shorol/compare/v1.1.1...v1.1.2) (2026-03-17)
+
+
+### Bug Fixes
+
+* trigger release pipeline ([#12](https://github.com/chetanbasuray/shorol/issues/12)) ([b71c7bb](https://github.com/chetanbasuray/shorol/commit/b71c7bba5d0e7be434984bc35d503209b3b8f943))
+
 ## [1.1.1](https://github.com/chetanbasuray/shorol/compare/v1.1.0...v1.1.1) (2026-03-17)
 
 
