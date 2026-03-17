@@ -41,6 +41,7 @@ jobs:
         with:
           node-version: 22.14.0
           cache: "npm"
+          registry-url: "https://registry.npmjs.org"
       - run: npm install -g npm@11.5.1
       - run: npm install
       - run: npm run build
@@ -48,4 +49,26 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           HUSKY: 0
-          NODE_AUTH_TOKEN: ""
+
+  release_preview:
+    needs: [test]
+    if: ${{ github.event_name == 'pull_request' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.14.0
+          cache: "npm"
+      - run: npm install -g npm@11.5.1
+      - run: npm install
+      - run: npm run build
+      - run: npx semantic-release --dry-run --no-ci
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          HUSKY: 0
