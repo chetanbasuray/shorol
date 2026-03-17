@@ -22,3 +22,29 @@ jobs:
       - run: npm run test
       - run: npm run build
       - run: npm run commitlint
+
+  release:
+    needs: [test]
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+      packages: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.14.0
+          cache: "npm"
+          registry-url: "https://registry.npmjs.org"
+      - run: npm install -g npm@11.5.1
+      - run: npm install
+      - run: npm run build
+      - run: npm run release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
