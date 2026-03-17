@@ -70,6 +70,7 @@ jobs:
     permissions:
       contents: read
       pull-requests: read
+      id-token: write
     steps:
       - uses: actions/checkout@v4
         with:
@@ -78,7 +79,23 @@ jobs:
         with:
           node-version: 24.x
           cache: "npm"
+          registry-url: "https://registry.npmjs.org"
       - run: npm --version
+      - run: npm config get registry
+      - name: Debug OIDC
+        run: |
+          echo "REPO=$GITHUB_REPOSITORY"
+          echo "WORKFLOW=$GITHUB_WORKFLOW"
+          echo "REF=$GITHUB_REF"
+          echo "SHA=$GITHUB_SHA"
+          echo "OIDC_URL=$ACTIONS_ID_TOKEN_REQUEST_URL"
+          if [ -n "$ACTIONS_ID_TOKEN_REQUEST_TOKEN" ]; then
+            echo "OIDC_TOKEN_SET=yes"
+          else
+            echo "OIDC_TOKEN_SET=no"
+          fi
+      - name: NPM auth check
+        run: npm whoami
       - run: npm install
       - run: npm run build
       - run: npx semantic-release --dry-run --no-ci
