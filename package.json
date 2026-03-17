@@ -1,5 +1,5 @@
 {
-  "name": "shorol",
+  "name": "@cbasuray/shorol",
   "version": "1.1.2",
   "description": "A TypeScript library.",
   "type": "module",
