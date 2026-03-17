@@ -20,5 +20,15 @@ export default [
       ...tseslint.configs.recommended.rules
     }
   },
+  {
+    files: ["scripts/**/*.mjs"],
+    languageOptions: {
+      globals: {
+        console: "readonly",
+        process: "readonly",
+        URL: "readonly"
+      }
+    }
+  },
   prettier
 ];
