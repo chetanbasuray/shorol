@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/chetanbasuray/shorol/compare/v1.1.0...v1.1.1) (2026-03-17)
+
+
+### Bug Fixes
+
+* release issues ([#10](https://github.com/chetanbasuray/shorol/issues/10)) ([8899b81](https://github.com/chetanbasuray/shorol/commit/8899b81faaf3c602f2588c860e35189ce1f532e2))
+
 # [1.1.0](https://github.com/chetanbasuray/shorol/compare/v1.0.0...v1.1.0) (2026-03-17)
 
 
