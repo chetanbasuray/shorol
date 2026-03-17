@@ -39,14 +39,19 @@ jobs:
           fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
-          node-version: 22.14.0
+          node-version: 24.x
           cache: "npm"
           registry-url: "https://registry.npmjs.org"
-      - run: npm install -g npm@11.5.1
+      - run: npm --version
+      - run: npm config get registry
       - run: npm install
       - run: npm run build
       - name: Debug OIDC
         run: |
+          echo "REPO=$GITHUB_REPOSITORY"
+          echo "WORKFLOW=$GITHUB_WORKFLOW"
+          echo "REF=$GITHUB_REF"
+          echo "SHA=$GITHUB_SHA"
           echo "OIDC_URL=$ACTIONS_ID_TOKEN_REQUEST_URL"
           if [ -n "$ACTIONS_ID_TOKEN_REQUEST_TOKEN" ]; then
             echo "OIDC_TOKEN_SET=yes"
@@ -71,9 +76,9 @@ jobs:
           fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
-          node-version: 22.14.0
+          node-version: 24.x
           cache: "npm"
-      - run: npm install -g npm@11.5.1
+      - run: npm --version
       - run: npm install
       - run: npm run build
       - run: npx semantic-release --dry-run --no-ci
