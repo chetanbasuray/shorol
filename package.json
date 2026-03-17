@@ -1,0 +1,76 @@
+{
+  "name": "shorol",
+  "version": "1.0.0",
+  "description": "A TypeScript library.",
+  "type": "module",
+  "license": "MIT",
+  "author": "Chetan Basuray",
+  "homepage": "https://github.com/chetanbasuray/shorol",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chetanbasuray/shorol.git"
+  },
+  "bugs": {
+    "url": "https://github.com/chetanbasuray/shorol/issues"
+  },
+  "keywords": [
+    "regex",
+    "regexp",
+    "regex-builder",
+    "fluent",
+    "builder",
+    "typescript",
+    "javascript",
+    "validation",
+    "pattern-matching",
+    "ai",
+    "readability"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "commitlint": "commitlint --from=origin/main --to=HEAD",
+    "prepare": "node ./scripts/prepare-husky.mjs",
+    "release": "semantic-release"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^19.2.2",
+    "@commitlint/config-conventional": "^19.2.2",
+    "@semantic-release/commit-analyzer": "^11.1.0",
+    "@semantic-release/exec": "^6.0.3",
+    "@semantic-release/github": "^10.0.2",
+    "@semantic-release/release-notes-generator": "^12.1.0",
+    "@types/node": "^20.11.30",
+    "@typescript-eslint/eslint-plugin": "^8.0.0",
+    "@typescript-eslint/parser": "^8.0.0",
+    "eslint": "^9.0.0",
+    "eslint-config-prettier": "^9.1.0",
+    "husky": "^9.0.11",
+    "prettier": "^3.2.5",
+    "semantic-release": "^23.0.6",
+    "tsup": "^8.0.2",
+    "typescript": "^5.4.3",
+    "vitest": "^4.1.0"
+  }
+}
