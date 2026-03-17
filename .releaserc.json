@@ -1,5 +1,5 @@
 {
-  "branches": ["main"],
+  "branches": ["main", { "name": "*", "prerelease": "pr", "channel": "pr" }],
   "verifyConditions": [
     "@semantic-release/changelog",
     "@semantic-release/github",
