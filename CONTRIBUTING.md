@@ -19,6 +19,30 @@ Thanks for your interest in contributing!
 - Lint: `npm run lint`
 - Format: `npm run format`
 
+## Regex Policy
+
+To keep regex readable and centralized, all regex patterns must live in `src/regexes.ts`.
+
+Example:
+
+```ts
+import { regex } from "./builder";
+
+export const slugBuilder = () =>
+  regex().start().word().oneOrMore().nonCapture((b) => b.literal("-").word().oneOrMore()).zeroOrMore().end();
+
+export const slugPattern = slugBuilder().toString();
+export const slugRegex = slugBuilder().toRegExp();
+```
+
+### Do / Don’t
+
+| Do | Don’t |
+| --- | --- |
+| Add new patterns to `src/regexes.ts` | Inline regex literals in feature code |
+| Export both `Pattern` and `Regex` | Export only a raw `/.../` regex |
+| Use the fluent builder for clarity | Hand-write complex regex strings |
+
 ## Reporting Issues
 
 Please include:
