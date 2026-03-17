@@ -1,14 +1,9 @@
 {
   "branches": ["main", { "name": "*", "prerelease": "pr", "channel": "pr" }],
-  "verifyConditions": [
-    "@semantic-release/changelog",
-    "@semantic-release/github",
-    "@semantic-release/git"
-  ],
+  "verifyConditions": ["@semantic-release/github"],
   "plugins": [
     "@semantic-release/commit-analyzer",
     "@semantic-release/release-notes-generator",
-    ["@semantic-release/changelog", { "changelogFile": "CHANGELOG.md" }],
     [
       "@semantic-release/exec",
       {
@@ -23,7 +18,6 @@
         "failCommentCondition": "<% return false; %>",
         "failTitleCondition": "<% return false; %>"
       }
-    ],
-    ["@semantic-release/git", { "assets": ["CHANGELOG.md", "package.json", "package-lock.json"] }]
+    ]
   ]
 }
