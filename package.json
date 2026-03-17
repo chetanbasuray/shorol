@@ -13,7 +13,19 @@
   "bugs": {
     "url": "https://github.com/chetanbasuray/shorol/issues"
   },
-  "keywords": [],
+  "keywords": [
+    "regex",
+    "regexp",
+    "regex-builder",
+    "fluent",
+    "builder",
+    "typescript",
+    "javascript",
+    "validation",
+    "pattern-matching",
+    "ai",
+    "readability"
+  ],
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
