@@ -6,6 +6,7 @@
 Shorol is a fluent, human-readable regex builder for JavaScript and TypeScript. It helps teams and AI agents
 generate regex that stays readable in code review, centralizes patterns in one place, and exports both pattern
 strings and `RegExp` objects for practical use.
+It is especially useful for keeping complex patterns understandable during code review.
 
 This project follows Conventional Commits to automate releases.
 
