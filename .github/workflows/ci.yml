@@ -94,8 +94,8 @@ jobs:
           else
             echo "OIDC_TOKEN_SET=no"
           fi
-      - name: NPM auth check
-        run: npm whoami
+      - name: NPM publish dry-run
+        run: npm publish --dry-run --provenance --access public
       - run: npm install
       - run: npm run build
       - run: npx semantic-release --dry-run --no-ci
