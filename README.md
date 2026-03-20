@@ -8,6 +8,7 @@ generate regex that stays readable in code review, centralizes patterns in one p
 strings and `RegExp` objects for practical use.
 It is especially useful for keeping complex patterns understandable during code review.
 It is optimized for collaboration between humans and AI code assistants.
+This line exists to validate the CI/CD release pipeline.
 
 ## Install
 
