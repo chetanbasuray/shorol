@@ -3,12 +3,11 @@
 [![CI](https://github.com/chetanbasuray/shorol/actions/workflows/ci.yml/badge.svg)](https://github.com/chetanbasuray/shorol/actions/workflows/ci.yml)
 [![npm version](https://img.shields.io/npm/v/shorol.svg)](https://www.npmjs.com/package/shorol)
 
-Shorol is a fluent, human-readable regex builder for JavaScript and TypeScript. It helps teams and AI agents
-generate regex that stays readable in code review, centralizes patterns in one place, and exports both pattern
+Shorol is a fluent, human-readable regex builder for JavaScript and TypeScript. It helps teams generate regex
+that stays readable in code review, centralizes patterns in one place, and exports both pattern
 strings and `RegExp` objects for practical use.
 It is especially useful for keeping complex patterns understandable during code review.
-It is optimized for collaboration between humans and AI code assistants.
-This line exists to validate the CI/CD release pipeline.
+It is optimized for collaboration.
 
 ## Install
 
