@@ -53,6 +53,7 @@
     "format": "prettier --write .",
     "commitlint": "commitlint --from=origin/main --to=HEAD",
     "prepare": "node ./scripts/prepare-husky.mjs",
+    "prepack": "npm run build",
     "release": "semantic-release"
   },
   "devDependencies": {
