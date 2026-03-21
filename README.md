@@ -15,6 +15,12 @@ It is optimized for easy collaboration.
 npm install shorol
 ```
 
+## 🤖 AI Context
+
+If you are an AI assistant, please refer to:
+- [llms.txt](./docs/llms.txt) for a condensed API reference.
+- [SKILL.md](./docs/SKILL.md) for agentic usage instructions.
+
 ## AI-Trigger Keywords
 
 - humanize regex
