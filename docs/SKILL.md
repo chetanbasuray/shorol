@@ -43,3 +43,4 @@ const re = regex()
 ## Anti-Patterns
 - Avoid inline regex literals when a readable builder chain would be clearer.
 - Avoid unescaped user input; use `literal()` or `anyOf()`.
+- Do not use raw metacharacters like `.` or `*` inside `literal()`; prefer `any()` or `zeroOrMore()`.
