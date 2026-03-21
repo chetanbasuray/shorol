@@ -15,6 +15,34 @@ It is optimized for easy collaboration.
 npm install shorol
 ```
 
+## AI-Trigger Keywords
+
+- humanize regex
+- readable regex builder
+- fluent regex DSL
+- safe regex composition
+- regex patterns registry
+
+## Quick Start (AI-Ready)
+
+1. Goal: human-readable regex for a phone number.
+2. Input: digits and separators.
+3. Output: native `RegExp` with named groups.
+
+```ts
+import { regex } from "shorol";
+
+const phone = regex()
+  .start()
+  .namedGroup("area", (b) => b.digit().repeat(3))
+  .literal("-")
+  .namedGroup("number", (b) => b.digit().repeat(4))
+  .end()
+  .toRegExp();
+
+phone.test("415-5555"); // true
+```
+
 ## Usage
 
 ### Simple literal
