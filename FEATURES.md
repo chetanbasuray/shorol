@@ -4,6 +4,8 @@ This document tracks Shorol's planned features and improvement ideas by release 
 
 ## 1.4.x (near-term, additive)
 
+**Milestone**: Due 2026-05-02 — Near-term additive improvements to the builder, docs, and registry examples.
+
 ### Builder API & DSL
 - Add `flags()` convenience methods (`global`, `ignoreCase`, `multiline`, `dotAll`, `unicode`).
 
@@ -17,6 +19,8 @@ This document tracks Shorol's planned features and improvement ideas by release 
 
 ## 1.5.x (medium-term)
 
+**Milestone**: Due 2026-06-21 — Medium-term preset module and validation improvements.
+
 ### Presets / Registry
 - Preset module design: `shorol/presets` (scoped patterns).
 - Add `uuidPatternBasic` preset (explicit scope).
@@ -29,6 +33,8 @@ This document tracks Shorol's planned features and improvement ideas by release 
 - Add contributor guide section: “How to add presets safely”.
 
 ## 2.x (larger scope)
+
+**Milestone**: Due 2026-09-21 — Larger-scope 2.x work: extensibility, AST, and policy/migration docs.
 
 ### Builder API & DSL
 - Optional AST output for builder (pattern introspection).
