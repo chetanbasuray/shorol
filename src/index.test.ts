@@ -51,7 +51,7 @@ describe("shorol regex builder", () => {
     const range = regex().range("a", "z").toString();
     expect(range).toBe("[a-z]");
     const escapedRange = regex().range("-", "]").toString();
-    expect(escapedRange).toBe("[\\-\\]]");
+    expect(escapedRange).toBe("[\\--\\]]");
   });
 
   it("supports named capture groups", () => {
@@ -132,5 +132,17 @@ describe("shorol regex builder", () => {
 
   it("throws when or() is called without a previous token", () => {
     expect(() => regex().or((b) => b.literal("x"))).toThrow();
+  });
+
+  it("covers repeat success paths", () => {
+    const exact = regex().literal("a").repeat(2).toString();
+    expect(exact).toBe("a{2}");
+    const ranged = regex().literal("a").repeat(2, 3).toString();
+    expect(ranged).toBe("a{2,3}");
+  });
+
+  it("guards internal token access", () => {
+    const builder = regex() as unknown as { getToken: (index: number) => string };
+    expect(() => builder.getToken(0)).toThrow("Missing token at index");
   });
 });
