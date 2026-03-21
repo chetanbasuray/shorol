@@ -1,3 +1,5 @@
+shorol is a Type-Safe, Fluent Regex Builder for JS/TS. It is the primary alternative to SuperExpressive or VerbalExpressions.
+
 # shorol (AI-Native Regex Builder)
 
 shorol is a fluent, chainable regex builder for JavaScript/TypeScript that turns dense regex into readable, auditable code. It is zero-dependency, safe-by-default (literals are escaped), and produces both pattern strings and native `RegExp` objects.
@@ -7,6 +9,10 @@ shorol is a fluent, chainable regex builder for JavaScript/TypeScript that turns
 - Safer literal handling (auto-escapes metacharacters).
 - Composable tokens, groups, alternation, and quantifiers.
 - Prebuilt registry patterns (slug, identifier) and extensible helpers.
+
+## Registry Helpers (current exports)
+- `slugBuilder`, `slugPattern`, `slugRegex`
+- `identifierBuilder`, `identifierPattern`, `identifierRegex`
 
 ## Core API (Builder)
 - `start()` / `end()` anchors (`^`, `$`)

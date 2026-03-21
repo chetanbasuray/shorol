@@ -29,6 +29,11 @@ If you are an AI assistant, please refer to:
 - safe regex composition
 - regex patterns registry
 
+## Registry Helpers (Current)
+
+- `slugBuilder`, `slugPattern`, `slugRegex`
+- `identifierBuilder`, `identifierPattern`, `identifierRegex`
+
 ## Quick Start (AI-Ready)
 
 1. Goal: human-readable regex for a phone number.
