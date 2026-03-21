@@ -6,7 +6,8 @@ on:
   pull_request:
 
 jobs:
-  test:
+  lint:
+    name: Lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -18,13 +19,39 @@ jobs:
           cache: "npm"
       - run: npm install
       - run: npm run lint
-      - run: npm run typecheck
+
+  code_coverage:
+    name: Code Coverage
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+      - run: npm install
       - run: npm run test:coverage
+
+  ci:
+    name: CI
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+      - run: npm install
+      - run: npm run typecheck
       - run: npm run build
       - run: npm run commitlint
 
   release_preview:
-    needs: [test]
+    needs: [lint, code_coverage, ci]
     if: ${{ github.event_name == 'pull_request' }}
     runs-on: ubuntu-latest
     permissions:
