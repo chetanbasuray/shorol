@@ -42,7 +42,6 @@ jobs:
           registry-url: "https://registry.npmjs.org"
       - run: npm install
       - run: npm run build
-      - run: npm publish --dry-run --access public
       - run: npx semantic-release --dry-run --no-ci
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
