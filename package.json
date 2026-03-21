@@ -48,10 +48,12 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
     "lint": "eslint .",
     "format": "prettier --write .",
     "commitlint": "commitlint --from=origin/main --to=HEAD",
     "prepare": "node ./scripts/prepare-husky.mjs",
+    "prepack": "npm run build",
     "release": "semantic-release"
   },
   "devDependencies": {
@@ -69,6 +71,7 @@
     "husky": "^9.0.11",
     "prettier": "^3.2.5",
     "semantic-release": "^23.0.6",
+    "@vitest/coverage-v8": "^4.1.0",
     "tsup": "^8.0.2",
     "typescript": "^5.4.3",
     "vitest": "^4.1.0"

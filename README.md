@@ -43,6 +43,16 @@ const re = regex()
 const pattern = regex().literal("yes").orLiteral("no").toString();
 ```
 
+### Named capture groups
+
+```ts
+const re = regex()
+  .namedGroup("area", (b) => b.digit().repeat(3))
+  .literal("-")
+  .namedGroup("number", (b) => b.digit().repeat(4))
+  .toRegExp();
+```
+
 ### Central regex registry
 
 ```ts
@@ -62,11 +72,13 @@ const identifier = new RegExp(identifierPattern);
 
 - `start()` / `end()`
 - `literal(text: string)`
+- `anyOf(chars: string | string[])` / `noneOf(chars: string | string[])` / `range(from: string, to: string)`
 - `any()` / `digit()` / `word()` / `whitespace()`
-- `group(fn)` / `nonCapture(fn)`
+- `group(fn)` / `namedGroup(name, fn)` / `nonCapture(fn)`
+- `lookahead(fn)` / `negativeLookahead(fn)` / `lookbehind(fn)` / `negativeLookbehind(fn)`
 - `or(fn)` / `orLiteral(text)`
 - `optional()` / `zeroOrMore()` / `oneOrMore()` / `repeat(min, max?)`
-- `toString()` / `toRegExp(flags?)`
+- `flags(flags: string)` / `toString()` / `toRegExp(flags?)`
 
 ## AI & Contributor Guidance
 
@@ -102,6 +114,7 @@ export const slugRegex = slugBuilder().toRegExp();
 
 Releases are automated via GitHub Actions and semantic-release on merges to `main`.
 This project follows Conventional Commits to automate releases.
+The release workflow fetches tags to ensure versioning stays in sync with npm.
 
 ## License
 

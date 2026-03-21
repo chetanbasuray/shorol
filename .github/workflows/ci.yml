@@ -19,7 +19,7 @@ jobs:
       - run: npm install
       - run: npm run lint
       - run: npm run typecheck
-      - run: npm run test
+      - run: npm run test:coverage
       - run: npm run build
       - run: npm run commitlint
 
@@ -40,7 +40,6 @@ jobs:
           node-version: 24.x
           cache: "npm"
           registry-url: "https://registry.npmjs.org"
-      - run: npm publish --dry-run --access public
       - run: npm install
       - run: npm run build
       - run: npx semantic-release --dry-run --no-ci

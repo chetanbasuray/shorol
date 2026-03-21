@@ -6,6 +6,25 @@ function escapeLiteral(input: string): string {
   return input.replace(META_CHARS, "\\$&");
 }
 
+function escapeCharClass(input: string): string {
+  return input.replace(/[\\\]\-^]/g, "\\$&");
+}
+
+function normalizeChars(chars: string | string[]): string {
+  if (typeof chars === "string") {
+    return chars;
+  }
+  return chars.join("");
+}
+
+function assertValidGroupName(name: string): void {
+  if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(name)) {
+    throw new Error(
+      "namedGroup(name, fn) requires a valid group name (letters, digits, underscore, not starting with a digit)"
+    );
+  }
+}
+
 function isGroup(token: string): boolean {
   return token.startsWith("(") && token.endsWith(")");
 }
@@ -27,6 +46,7 @@ export class Builder {
   private tokens: string[] = [];
   private started = false;
   private ended = false;
+  private storedFlags?: string;
 
   private ensureCanAdd(): void {
     if (this.ended) {
@@ -82,6 +102,33 @@ export class Builder {
     return this.addToken(escaped);
   }
 
+  anyOf(chars: string | string[]): this {
+    const raw = normalizeChars(chars);
+    if (raw.length === 0) {
+      throw new Error("anyOf(chars) requires at least one character");
+    }
+    const escaped = escapeCharClass(raw);
+    return this.addToken(`[${escaped}]`);
+  }
+
+  noneOf(chars: string | string[]): this {
+    const raw = normalizeChars(chars);
+    if (raw.length === 0) {
+      throw new Error("noneOf(chars) requires at least one character");
+    }
+    const escaped = escapeCharClass(raw);
+    return this.addToken(`[^${escaped}]`);
+  }
+
+  range(from: string, to: string): this {
+    if (from.length === 0 || to.length === 0) {
+      throw new Error("range(from, to) requires non-empty bounds");
+    }
+    const escapedFrom = escapeCharClass(from);
+    const escapedTo = escapeCharClass(to);
+    return this.addToken(`[${escapedFrom}-${escapedTo}]`);
+  }
+
   any(): this {
     return this.addToken(".");
   }
@@ -103,9 +150,35 @@ export class Builder {
     return this.addToken(`(${child.toString()})`);
   }
 
+  namedGroup(name: string, fn: BuildFn): this {
+    assertValidGroupName(name);
+    const child = fn(new Builder());
+    return this.addToken(`(?<${name}>${child.toString()})`);
+  }
+
   nonCapture(fn: BuildFn): this {
     const child = fn(new Builder());
     return this.addToken(`(?:${child.toString()})`);
+  }
+
+  lookahead(fn: BuildFn): this {
+    const child = fn(new Builder());
+    return this.addToken(`(?=${child.toString()})`);
+  }
+
+  negativeLookahead(fn: BuildFn): this {
+    const child = fn(new Builder());
+    return this.addToken(`(?!${child.toString()})`);
+  }
+
+  lookbehind(fn: BuildFn): this {
+    const child = fn(new Builder());
+    return this.addToken(`(?<=${child.toString()})`);
+  }
+
+  negativeLookbehind(fn: BuildFn): this {
+    const child = fn(new Builder());
+    return this.addToken(`(?<!${child.toString()})`);
   }
 
   or(fn: BuildFn): this {
@@ -144,12 +217,18 @@ export class Builder {
     return this.applyQuantifier(range);
   }
 
+  flags(flags: string): this {
+    this.storedFlags = flags;
+    return this;
+  }
+
   toString(): string {
     return this.tokens.join("");
   }
 
   toRegExp(flags?: string): RegExp {
-    return new RegExp(this.toString(), flags);
+    const finalFlags = flags ?? this.storedFlags;
+    return new RegExp(this.toString(), finalFlags);
   }
 }
 
