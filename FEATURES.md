@@ -1,27 +1,44 @@
-# Feature Plan
+# Feature Plan / Roadmap
 
-This document tracks Shorol's planned features and improvement ideas.
+This document tracks Shorol's planned features and improvement ideas by release bucket and theme.
 
-## v0.1 (current)
+## 1.4.x (near-term, additive)
 
-- Fluent builder core
-- Literal escaping
-- Basic tokens (`any`, `digit`, `word`, `whitespace`)
-- Anchors (`start`, `end`)
-- Groups (capture, non-capture)
-- Alternation (`or`, `orLiteral`)
-- Quantifiers (`optional`, `zeroOrMore`, `oneOrMore`, `repeat`)
-- String and `RegExp` output
+### Builder API & DSL
+- Add `flags()` convenience methods (`global`, `ignoreCase`, `multiline`, `dotAll`, `unicode`).
 
-## v0.2+ ideas
+### Presets / Registry
+- Add example: UUID builder pattern (docs-only, beginner-friendly).
 
-- Character class builder (`anyOf`, `noneOf`, `range`)
-- Named capture groups
-- Lookarounds (positive/negative lookahead, lookbehind)
-- Flags builder (`global`, `ignoreCase`, `multiline`, `dotAll`, `unicode`)
-- Comments mode / free-spacing mode
-- Predefined presets (email, URL, UUID)
-- Better error messages and validation
+### DX / Docs / Tooling
+- Add `noneOf()` / `range()` doc examples in README + `docs/llms.txt`.
+- Add builder examples for lookarounds + named groups in docs.
+- Add `regexRegistry` docs for extending patterns.
+
+## 1.5.x (medium-term)
+
+### Presets / Registry
+- Preset module design: `shorol/presets` (scoped patterns).
+- Add `uuidPatternBasic` preset (explicit scope).
+- Add `hexColorPattern` preset (explicit scope).
+
+### Validation / Error Handling
+- Error messaging improvements for invalid group names.
+
+### DX / Docs / Tooling
+- Add contributor guide section: “How to add presets safely”.
+
+## 2.x (larger scope)
+
+### Builder API & DSL
+- Optional AST output for builder (pattern introspection).
+- Builder plugin hooks / custom tokens API.
+
+### Presets / Registry
+- Preset validation policy & test matrix (locale-dependent).
+
+### DX / Docs / Tooling
+- Structured migration guide for 2.x.
 
 ## Contributing new ideas
 
