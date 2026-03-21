@@ -1,7 +1,7 @@
 {
   "name": "shorol",
-  "version": "1.0.1",
-  "description": "A TypeScript library.",
+  "version": "0.0.0-development",
+  "description": "Fluent, human-readable regex builder for JavaScript/TypeScript.",
   "type": "module",
   "license": "MIT",
   "author": "Chetan Basuray",
@@ -31,7 +31,9 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
-    }
+    },
+    "./llms.txt": "./docs/llms.txt",
+    "./SKILL.md": "./docs/SKILL.md"
   },
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
