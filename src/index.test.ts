@@ -95,6 +95,21 @@ describe("shorol regex builder", () => {
     expect(re.flags).toBe("gi");
   });
 
+  it("avoids duplicate flags and preserves order", () => {
+    const re = regex().literal("hi").global().global().ignoreCase().toRegExp();
+    expect(re.flags).toBe("gi");
+  });
+
+  it("appends helper flags to stored flags", () => {
+    const re = regex().literal("hi").flags("im").global().toRegExp();
+    expect(re.flags).toBe("gim");
+  });
+
+  it("supports multiline, dotAll, and unicode helpers", () => {
+    const re = regex().literal("hi").multiline().dotAll().unicode().toRegExp();
+    expect(re.flags).toBe("msu");
+  });
+
   it("builds RegExp with flags", () => {
     const re = regex().literal("hi").toRegExp("i");
     expect(re).toBeInstanceOf(RegExp);
