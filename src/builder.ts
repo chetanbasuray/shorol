@@ -260,6 +260,42 @@ export class Builder {
     return this;
   }
 
+  private appendFlag(flag: string): this {
+    if (!this.storedFlags) {
+      this.storedFlags = flag;
+      return this;
+    }
+    if (!this.storedFlags.includes(flag)) {
+      this.storedFlags += flag;
+    }
+    return this;
+  }
+
+  /** Enable global ("g") flag. */
+  global(): this {
+    return this.appendFlag("g");
+  }
+
+  /** Enable ignore-case ("i") flag. */
+  ignoreCase(): this {
+    return this.appendFlag("i");
+  }
+
+  /** Enable multiline ("m") flag. */
+  multiline(): this {
+    return this.appendFlag("m");
+  }
+
+  /** Enable dotAll ("s") flag. */
+  dotAll(): this {
+    return this.appendFlag("s");
+  }
+
+  /** Enable unicode ("u") flag. */
+  unicode(): this {
+    return this.appendFlag("u");
+  }
+
   /** Build the raw regex pattern string. */
   toString(): string {
     return this.tokens.join("");

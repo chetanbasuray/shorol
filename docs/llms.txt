@@ -52,6 +52,44 @@ const noSpaces = regex().noneOf(" \t\n\r").oneOrMore();
 const lowerAZ = regex().range("a", "z").oneOrMore();
 ```
 
+### Lookarounds and named groups
+```ts
+const password = regex()
+  .lookahead((b) => b.any().oneOrMore().digit())
+  .lookahead((b) => b.any().oneOrMore().anyOf("!@#$"))
+  .any()
+  .oneOrMore()
+  .toRegExp();
+
+const quoted = regex()
+  .namedGroup("value", (b) => b.noneOf("\"").oneOrMore())
+  .toRegExp();
+```
+
+### UUID v4 (builder example)
+```ts
+const uuidV4 = regex()
+  .start()
+  .anyOf("0123456789abcdef")
+  .repeat(8)
+  .literal("-")
+  .anyOf("0123456789abcdef")
+  .repeat(4)
+  .literal("-")
+  .literal("4")
+  .anyOf("0123456789abcdef")
+  .repeat(3)
+  .literal("-")
+  .anyOf("89ab")
+  .anyOf("0123456789abcdef")
+  .repeat(3)
+  .literal("-")
+  .anyOf("0123456789abcdef")
+  .repeat(12)
+  .end()
+  .toRegExp("i");
+```
+
 ### Registry usage
 ```ts
 import { slugRegex, identifierPattern } from "shorol";
