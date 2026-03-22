@@ -108,6 +108,43 @@ const noSpaces = regex()
 const lowerAZ = regex().range("a", "z").oneOrMore().toRegExp();
 ```
 
+### Lookarounds and named groups
+
+```ts
+const password = regex()
+  .lookahead((b) => b.any().oneOrMore().digit())
+  .lookahead((b) => b.any().oneOrMore().anyOf("!@#$"))
+  .any()
+  .oneOrMore()
+  .toRegExp();
+```
+
+```ts
+const quoted = regex()
+  .namedGroup("value", (b) => b.noneOf("\"").oneOrMore())
+  .toRegExp();
+```
+
+### UUID v4 (builder example)
+
+```ts
+const uuidV4 = regex()
+  .start()
+  .anyOf("0123456789abcdef").repeat(8)
+  .literal("-")
+  .anyOf("0123456789abcdef").repeat(4)
+  .literal("-")
+  .literal("4")
+  .anyOf("0123456789abcdef").repeat(3)
+  .literal("-")
+  .anyOf("89ab")
+  .anyOf("0123456789abcdef").repeat(3)
+  .literal("-")
+  .anyOf("0123456789abcdef").repeat(12)
+  .end()
+  .toRegExp("i");
+```
+
 ### Named capture groups
 
 ```ts
@@ -143,6 +180,7 @@ const identifier = new RegExp(identifierPattern);
 - `lookahead(fn)` / `negativeLookahead(fn)` / `lookbehind(fn)` / `negativeLookbehind(fn)`
 - `or(fn)` / `orLiteral(text)`
 - `optional()` / `zeroOrMore()` / `oneOrMore()` / `repeat(min, max?)`
+- `global()` / `ignoreCase()` / `multiline()` / `dotAll()` / `unicode()`
 - `flags(flags: string)` / `toString()` / `toRegExp(flags?)`
 
 ## AI & Contributor Guidance

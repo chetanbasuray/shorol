@@ -90,6 +90,11 @@ describe("shorol regex builder", () => {
     expect(override.flags).toBe("g");
   });
 
+  it("supports convenience flag helpers", () => {
+    const re = regex().literal("hi").global().ignoreCase().toRegExp();
+    expect(re.flags).toBe("gi");
+  });
+
   it("builds RegExp with flags", () => {
     const re = regex().literal("hi").toRegExp("i");
     expect(re).toBeInstanceOf(RegExp);
