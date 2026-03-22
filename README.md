@@ -86,6 +86,28 @@ const re = regex()
 const pattern = regex().literal("yes").orLiteral("no").toString();
 ```
 
+### Character classes
+
+```ts
+const slug = regex()
+  .anyOf("abcdefghijklmnopqrstuvwxyz0123456789")
+  .oneOrMore()
+  .toRegExp("i");
+```
+
+```ts
+const noSpaces = regex()
+  .start()
+  .noneOf(" \t\n\r")
+  .oneOrMore()
+  .end()
+  .toRegExp();
+```
+
+```ts
+const lowerAZ = regex().range("a", "z").oneOrMore().toRegExp();
+```
+
 ### Named capture groups
 
 ```ts
