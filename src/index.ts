@@ -34,3 +34,9 @@ export { regex } from "./builder";
  * ```
  */
 export * from "./regexes";
+
+/**
+ * Scoped presets for common patterns (uuid, hex color, etc.).
+ * Import from `shorol/presets` for module-scoped semantics.
+ */
+export * from "./presets";
