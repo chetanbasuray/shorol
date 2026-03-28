@@ -46,6 +46,9 @@ This document tracks Shorol's planned features and improvement ideas by release 
 ### DX / Docs / Tooling
 - Add presets usage + scope disclaimer to README and `docs/llms.txt`.
 - Add preset test case template snippet to README.
+- Add presets index doc (`docs/presets.md`) listing name, scope, examples.
+- Add a “Good First Issue” template to guide new contributors.
+- Add an example gallery in README (recipes).
 
 ## 1.7.x (medium-term)
 
@@ -58,6 +61,7 @@ This document tracks Shorol's planned features and improvement ideas by release 
 ### DX / Docs / Tooling
 - Add a preset test template to `docs/PRESETS_GUIDE.md`.
 - Export `escapeLiteral` helper for reuse (documented).
+- Add a design rules section (no inline regex, naming conventions).
 
 ## 1.8.x (later 1.x)
 
@@ -76,12 +80,16 @@ This document tracks Shorol's planned features and improvement ideas by release 
 ### Builder API & DSL
 - Optional AST output for builder (pattern introspection).
 - Builder plugin hooks / custom tokens API.
+- Add `explain()` output for builder chains.
+- Add typed named-groups helper (TypeScript).
+- Add `clone()` method for safe branching.
 
 ### Presets / Registry
 - Preset validation policy & test matrix (locale-dependent).
 
 ### DX / Docs / Tooling
 - Structured migration guide for 2.x.
+- Add preset scopes + validation policy doc.
 
 ## Contributing new ideas
 
