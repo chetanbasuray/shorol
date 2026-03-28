@@ -21,7 +21,7 @@ function normalizeChars(chars: string | string[]): string {
 function assertValidGroupName(name: string): void {
   if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(name)) {
     throw new Error(
-      "namedGroup(name, fn) requires a valid group name (letters, digits, underscore, not starting with a digit)"
+      "Invalid namedGroup name. Use letters, digits, or underscore and do not start with a digit (e.g. user_id, group1)."
     );
   }
 }

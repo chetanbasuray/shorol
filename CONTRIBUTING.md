@@ -43,6 +43,16 @@ export const slugRegex = slugBuilder().toRegExp();
 | Export both `Pattern` and `Regex` | Export only a raw `/.../` regex |
 | Use the fluent builder for clarity | Hand-write complex regex strings |
 
+## Presets Policy (Scoped Patterns)
+
+Presets are best-effort, scoped patterns exported from `src/presets.ts`. When adding a preset:
+
+- Use explicit, scoped names (e.g., `uuidPatternBasic`, `hexColorPattern`).
+- Document the scope in the preset description or docs (what it does and does not validate).
+- Prefer builder-based patterns for readability and consistency.
+- Add tests for both valid and invalid samples.
+- Follow the detailed guidance in `docs/PRESETS_GUIDE.md`.
+
 ## Reporting Issues
 
 Please include:
