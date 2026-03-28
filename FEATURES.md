@@ -39,9 +39,13 @@ This document tracks Shorol's planned features and improvement ideas by release 
 ### Builder API & DSL
 - Add word boundary helpers (`wordBoundary`, `nonWordBoundary`).
 - Add line break and tab helpers (`lineBreak`, `tab`).
+- Add `letter()` helper for `[a-zA-Z]`.
+- Add `space()` helper for literal spaces.
+- Add `matches(input: string)` helper for quick checks.
 
 ### DX / Docs / Tooling
 - Add presets usage + scope disclaimer to README and `docs/llms.txt`.
+- Add preset test case template snippet to README.
 
 ## 1.7.x (medium-term)
 
@@ -53,6 +57,7 @@ This document tracks Shorol's planned features and improvement ideas by release 
 
 ### DX / Docs / Tooling
 - Add a preset test template to `docs/PRESETS_GUIDE.md`.
+- Export `escapeLiteral` helper for reuse (documented).
 
 ## 1.8.x (later 1.x)
 
