@@ -51,6 +51,7 @@ Presets are best-effort, scoped patterns exported from `src/presets.ts`. When ad
 - Document the scope in the preset description or docs (what it does and does not validate).
 - Prefer builder-based patterns for readability and consistency.
 - Add tests for both valid and invalid samples.
+- Follow the detailed guidance in `docs/PRESETS_GUIDE.md`.
 
 ## Reporting Issues
 
