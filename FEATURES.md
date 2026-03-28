@@ -32,6 +32,38 @@ This document tracks Shorol's planned features and improvement ideas by release 
 ### DX / Docs / Tooling
 - Add contributor guide section: “How to add presets safely”.
 
+## 1.6.x (near-term)
+
+**Milestone**: Due 2026-05-09 — Near-term ergonomics and docs improvements.
+
+### Builder API & DSL
+- Add word boundary helpers (`wordBoundary`, `nonWordBoundary`).
+- Add line break and tab helpers (`lineBreak`, `tab`).
+
+### DX / Docs / Tooling
+- Add presets usage + scope disclaimer to README and `docs/llms.txt`.
+
+## 1.7.x (medium-term)
+
+**Milestone**: Due 2026-06-28 — Scoped preset expansion and contributor DX.
+
+### Presets / Registry
+- Add `isoDatePatternBasic` preset (YYYY-MM-DD, scoped).
+- Add `usernamePatternBasic` preset (3–30, alnum+underscore).
+
+### DX / Docs / Tooling
+- Add a preset test template to `docs/PRESETS_GUIDE.md`.
+
+## 1.8.x (later 1.x)
+
+**Milestone**: Due 2026-09-28 — Builder polish and validation hardening.
+
+### Builder API & DSL
+- Add repeat aliases (`exactly`, `between`).
+
+### Validation / Error Handling
+- Validate `flags()` input for invalid or duplicate flags.
+
 ## 2.x (larger scope)
 
 **Milestone**: Due 2026-09-21 — Larger-scope 2.x work: extensibility, AST, and policy/migration docs.
