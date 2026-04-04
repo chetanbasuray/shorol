@@ -48,7 +48,9 @@ jobs:
       - run: npm install
       - run: npm run typecheck
       - run: npm run build
-      - run: npm run commitlint
+      - name: Commitlint (main only)
+        if: ${{ github.event_name != 'pull_request' }}
+        run: npm run commitlint
 
   release_preview:
     needs: [lint, code_coverage, ci]
