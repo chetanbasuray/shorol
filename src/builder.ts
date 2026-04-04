@@ -164,9 +164,19 @@ export class Builder {
     return this.addToken("\\w");
   }
 
+  /** Add a letter matcher (`[a-zA-Z]`). */
+  letter(): this {
+    return this.addToken("[a-zA-Z]");
+  }
+
   /** Add a whitespace matcher (`\\s`). */
   whitespace(): this {
     return this.addToken("\\s");
+  }
+
+  /** Add a literal space character. */
+  space(): this {
+    return this.addToken(" ");
   }
 
   /** Add a capturing group built by the provided callback. */
