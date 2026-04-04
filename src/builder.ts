@@ -316,6 +316,11 @@ export class Builder {
     const finalFlags = flags ?? this.storedFlags;
     return new RegExp(this.toString(), finalFlags);
   }
+
+  /** Test the built `RegExp` against input. */
+  matches(input: string, flags?: string): boolean {
+    return this.toRegExp(flags).test(input);
+  }
 }
 
 /** Create a new regex builder. */
