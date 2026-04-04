@@ -174,6 +174,11 @@ export class Builder {
     return this.addToken("\\s");
   }
 
+  /** Add a literal space character. */
+  space(): this {
+    return this.addToken(" ");
+  }
+
   /** Add a capturing group built by the provided callback. */
   group(fn: BuildFn): this {
     const child = fn(new Builder());

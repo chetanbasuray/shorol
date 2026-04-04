@@ -43,6 +43,11 @@ describe("shorol regex builder", () => {
     expect(pattern).toBe("[a-zA-Z]");
   });
 
+  it("supports space() token", () => {
+    const pattern = regex().space().toString();
+    expect(pattern).toBe(" ");
+  });
+
   it("supports alternation on the previous token", () => {
     const pattern = regex().literal("yes").orLiteral("no").toString();
     expect(pattern).toBe("(?:yes|no)");
