@@ -38,6 +38,11 @@ describe("shorol regex builder", () => {
     expect(pattern).toBe(".");
   });
 
+  it("supports letter() token", () => {
+    const pattern = regex().letter().toString();
+    expect(pattern).toBe("[a-zA-Z]");
+  });
+
   it("supports alternation on the previous token", () => {
     const pattern = regex().literal("yes").orLiteral("no").toString();
     expect(pattern).toBe("(?:yes|no)");
