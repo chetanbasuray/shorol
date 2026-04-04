@@ -53,7 +53,6 @@ describe("shorol regex builder", () => {
     expect(builder.matches("cat")).toBe(true);
     expect(builder.matches("cats")).toBe(false);
   });
-
   it("supports alternation on the previous token", () => {
     const pattern = regex().literal("yes").orLiteral("no").toString();
     expect(pattern).toBe("(?:yes|no)");

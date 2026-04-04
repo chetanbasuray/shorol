@@ -60,6 +60,22 @@ phone.test("415-5555"); // true
 
 ## Usage
 
+### Preset test template
+
+Use this format when adding presets to keep tests consistent:
+
+```ts
+describe("preset name", () => {
+  it("accepts valid inputs", () => {
+    expect(presetRegex.test("valid")).toBe(true);
+  });
+
+  it("rejects invalid inputs", () => {
+    expect(presetRegex.test("invalid")).toBe(false);
+  });
+});
+```
+
 ### Simple literal
 
 ```ts
