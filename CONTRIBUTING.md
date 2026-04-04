@@ -11,6 +11,11 @@ Thanks for your interest in contributing!
 5. Ensure your commits follow Conventional Commits (used for automated releases).
 6. Open a pull request with a clear description of the change.
 
+## Release Branch Policy
+
+- PRs to `main` must come from `release/*` or `hotfix/*` branches.
+- Feature work should target the active release branch (e.g. `release/1.6.x`).
+
 ## Development Setup
 
 - Build: `npm run build`
