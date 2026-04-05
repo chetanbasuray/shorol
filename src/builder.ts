@@ -3,7 +3,11 @@ type BuildFn = (builder: Builder) => Builder;
 
 const META_CHARS = /[.*+?^${}()|[\]\\]/g;
 
-function escapeLiteral(input: string): string {
+/**
+ * Escape regex metacharacters in a literal string.
+ * Useful when storing or reusing escaped tokens outside the builder.
+ */
+export function escapeLiteral(input: string): string {
   return input.replace(META_CHARS, "\\$&");
 }
 

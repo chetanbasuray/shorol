@@ -1,10 +1,14 @@
 import { describe, expect, it } from "vitest";
-import { regex } from "./index";
+import { escapeLiteral, regex } from "./index";
 
 describe("shorol regex builder", () => {
   it("escapes literals", () => {
     const pattern = regex().literal("a+b*").toString();
     expect(pattern).toBe("a\\+b\\*");
+  });
+
+  it("exports escapeLiteral helper", () => {
+    expect(escapeLiteral("a+b*")).toBe("a\\+b\\*");
   });
 
   it("supports anchors", () => {
