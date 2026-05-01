@@ -24,6 +24,18 @@ export { Builder } from "./builder";
 export { regex } from "./builder";
 
 /**
+ * Escape regex metacharacters in a literal string.
+ *
+ * @example
+ * ```ts
+ * import { escapeLiteral } from "shorol";
+ *
+ * escapeLiteral("a+b*"); // "a\\+b\\*"
+ * ```
+ */
+export { escapeLiteral } from "./builder";
+
+/**
  * Prebuilt regex registry helpers and patterns.
  *
  * @example
