@@ -34,6 +34,20 @@ jobs:
       - run: npm install
       - run: npm run test:coverage
 
+  doc_sync:
+    name: Doc Sync
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+      - run: npm install
+      - run: npm run docs:sync
+
   ci:
     name: CI
     runs-on: ubuntu-latest
@@ -53,7 +67,7 @@ jobs:
         run: npm run commitlint
 
   release_preview:
-    needs: [lint, code_coverage, ci]
+    needs: [lint, code_coverage, doc_sync, ci]
     if: ${{ github.event_name == 'pull_request' }}
     runs-on: ubuntu-latest
     permissions:
