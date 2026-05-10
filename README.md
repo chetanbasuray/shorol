@@ -38,6 +38,14 @@ If you are an AI assistant, please refer to:
 - `slugBuilder`, `slugPattern`, `slugRegex`
 - `identifierBuilder`, `identifierPattern`, `identifierRegex`
 
+## Presets Scope
+
+Presets are scoped, best-effort helpers for common formats. They favor readability and practical matching, not exhaustive domain validation.
+
+- Use `shorol/presets` for common pattern starters.
+- Keep strict business validation in app/domain logic.
+- See [docs/presets.md](./docs/presets.md) for scope and examples.
+
 ## Quick Start (AI-Ready)
 
 1. Goal: human-readable regex for a phone number.
@@ -161,6 +169,33 @@ const uuidV4 = regex()
   .toRegExp("i");
 ```
 
+## Example Gallery (Recipes)
+
+### Username (3-30, alnum + underscore)
+
+```ts
+const username = regex()
+  .start()
+  .anyOf("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_")
+  .repeat(3, 30)
+  .end()
+  .toRegExp();
+```
+
+### ISO Date (basic `YYYY-MM-DD` shape)
+
+```ts
+const isoDate = regex()
+  .start()
+  .digit().repeat(4)
+  .literal("-")
+  .digit().repeat(2)
+  .literal("-")
+  .digit().repeat(2)
+  .end()
+  .toRegExp();
+```
+
 ### Named capture groups
 
 ```ts
@@ -192,20 +227,32 @@ const identifier = new RegExp(identifierPattern);
 - `literal(text: string)`
 - `anyOf(chars: string | string[])` / `noneOf(chars: string | string[])` / `range(from: string, to: string)`
 - `any()` / `digit()` / `word()` / `whitespace()`
+- `wordBoundary()` / `nonWordBoundary()`
+- `space()` / `lineBreak()` / `tab()`
 - `group(fn)` / `namedGroup(name, fn)` / `nonCapture(fn)`
 - `lookahead(fn)` / `negativeLookahead(fn)` / `lookbehind(fn)` / `negativeLookbehind(fn)`
 - `or(fn)` / `orLiteral(text)`
 - `optional()` / `zeroOrMore()` / `oneOrMore()` / `repeat(min, max?)`
 - `global()` / `ignoreCase()` / `multiline()` / `dotAll()` / `unicode()`
 - `flags(flags: string)` / `toString()` / `toRegExp(flags?)`
+- `matches(input: string, flags?: string)`
+- `clone()`
 
 ## AI & Contributor Guidance
 
 Shorol is designed to keep regex readable for humans. To make AI- and human-generated regex easy to review:
 
 - Put all regex definitions in `src/regexes.ts`.
+- Put scoped common-format helpers in `src/presets.ts`.
 - Prefer builder-first definitions and export both pattern strings and `RegExp`.
 - Avoid inline regex literals in app code.
+
+## Design Rules
+
+- Prefer builder tokens over raw metachar strings in literals.
+- Keep patterns centralized in registry/presets modules.
+- Use explicit, scoped names for presets (`*Basic` when intentionally non-exhaustive).
+- Add valid and invalid test cases for every new exported pattern.
 
 ### Adding a registry entry
 

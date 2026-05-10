@@ -58,6 +58,17 @@ Presets are best-effort, scoped patterns exported from `src/presets.ts`. When ad
 - Add tests for both valid and invalid samples.
 - Follow the detailed guidance in `docs/PRESETS_GUIDE.md`.
 
+## Documentation Drift Policy
+
+`doc-sync-check` runs in CI via `npm run docs:sync` and fails on drift.
+
+- Current behavior: strict drift failures are blocking; undocumented warnings are tracked and resolved incrementally.
+- Source of truth for signatures: `docs/api-signatures.md`.
+- Coverage targets:
+- Target 1: 30%+ documented symbols (current baseline).
+- Target 2: 60% documented symbols before the next minor release.
+- Target 3: 90%+ documented symbols before moving undocumented warnings to blocking status.
+
 ## Reporting Issues
 
 Please include:

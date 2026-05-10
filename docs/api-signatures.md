@@ -9,6 +9,7 @@ This file is used by `doc-sync-check` to detect documentation drift for exported
 ## Builders and Registries
 
 `regex(): Builder`
+`escapeLiteral(input: string): string`
 `const slugBuilder`
 `const slugPattern`
 `const slugRegex`
@@ -20,4 +21,8 @@ This file is used by `doc-sync-check` to detect documentation drift for exported
 `const uuidRegexBasic`
 `const hexColorPattern`
 `const hexColorRegex`
+`const isoDatePatternBasic`
+`const isoDateRegexBasic`
+`const usernamePatternBasic`
+`const usernameRegexBasic`
 `const presetsRegistry`

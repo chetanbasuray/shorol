@@ -52,10 +52,30 @@ describe("shorol regex builder", () => {
     expect(pattern).toBe(" ");
   });
 
+  it("supports boundary helpers", () => {
+    const pattern = regex().wordBoundary().literal("cat").nonWordBoundary().toString();
+    expect(pattern).toBe("\\bcat\\B");
+  });
+
+  it("supports lineBreak() and tab() helpers", () => {
+    const pattern = regex().literal("a").lineBreak().tab().literal("b").toString();
+    expect(pattern).toBe("a\\n\\tb");
+  });
+
   it("supports matches() helper", () => {
     const builder = regex().start().literal("cat").end();
     expect(builder.matches("cat")).toBe(true);
     expect(builder.matches("cats")).toBe(false);
+  });
+
+  it("supports clone() for safe branching", () => {
+    const base = regex().start().literal("id");
+    const left = base.clone().literal("-").digit().repeat(2).end().toString();
+    const right = base.clone().literal("_").word().oneOrMore().end().toString();
+
+    expect(left).toBe("^id-\\d{2}$");
+    expect(right).toBe("^id_\\w+$");
+    expect(base.toString()).toBe("^id");
   });
   it("supports alternation on the previous token", () => {
     const pattern = regex().literal("yes").orLiteral("no").toString();

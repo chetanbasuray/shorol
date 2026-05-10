@@ -168,6 +168,16 @@ export class Builder {
     return this.addToken("\\w");
   }
 
+  /** Add a word boundary matcher (`\\b`). */
+  wordBoundary(): this {
+    return this.addToken("\\b");
+  }
+
+  /** Add a non-word-boundary matcher (`\\B`). */
+  nonWordBoundary(): this {
+    return this.addToken("\\B");
+  }
+
   /** Add a letter matcher (`[a-zA-Z]`). */
   letter(): this {
     return this.addToken("[a-zA-Z]");
@@ -181,6 +191,16 @@ export class Builder {
   /** Add a literal space character. */
   space(): this {
     return this.addToken(" ");
+  }
+
+  /** Add a line-break matcher (`\\n`). */
+  lineBreak(): this {
+    return this.addToken("\\n");
+  }
+
+  /** Add a tab matcher (`\\t`). */
+  tab(): this {
+    return this.addToken("\\t");
   }
 
   /** Add a capturing group built by the provided callback. */
@@ -313,6 +333,16 @@ export class Builder {
   /** Build the raw regex pattern string. */
   toString(): string {
     return this.tokens.join("");
+  }
+
+  /** Clone the current builder for safe branching. */
+  clone(): Builder {
+    const next = new Builder();
+    next.tokens = [...this.tokens];
+    next.started = this.started;
+    next.ended = this.ended;
+    next.storedFlags = this.storedFlags;
+    return next;
   }
 
   /** Build a native `RegExp`, using passed flags or stored flags. */

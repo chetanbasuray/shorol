@@ -41,3 +41,17 @@ export const uuidRegexBasic = new RegExp(uuidPatternBasic);
 - At least 2–3 valid examples.
 - At least 2–3 invalid examples.
 - Include edge cases that are commonly mis‑classified.
+
+### Preset Test Template
+
+```ts
+describe("preset name", () => {
+  it("accepts valid inputs", () => {
+    expect(presetRegex.test("valid")).toBe(true);
+  });
+
+  it("rejects invalid inputs", () => {
+    expect(presetRegex.test("invalid")).toBe(false);
+  });
+});
+```
