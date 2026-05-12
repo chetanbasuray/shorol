@@ -195,7 +195,7 @@ Shorol is designed to keep regex readable for humans. To make AI- and human-gene
 
 1. Add a builder function + exports in `src/regexes.ts`.
 2. Re-export the new entry from `src/index.ts` if it should be public.
-3. Add a small test in `src/regexes.test.ts`.
+3. Add a small test  in `src/regexes.test.ts`.
 
 Example registry entry:
 
