@@ -14,16 +14,31 @@ shorol is a fluent, chainable regex builder for JavaScript/TypeScript that turns
 - `slugBuilder`, `slugPattern`, `slugRegex`
 - `identifierBuilder`, `identifierPattern`, `identifierRegex`
 
+## Presets Helpers (current exports from `shorol/presets`)
+- `uuidPatternBasic`, `uuidRegexBasic`
+- `hexColorPattern`, `hexColorRegex`
+- `isoDatePatternBasic`, `isoDateRegexBasic`
+- `usernamePatternBasic`, `usernameRegexBasic`
+
+## Presets Scope Disclaimer
+- Presets are scoped, best-effort helpers, not full business/domain validators.
+- Use presets for readable composition and baseline matching.
+- Perform strict, domain-specific validation separately in app logic.
+
 ## Core API (Builder)
 - `start()` / `end()` anchors (`^`, `$`)
 - `literal(text)` escaped literal
 - `any()` / `digit()` / `word()` / `whitespace()`
+- `wordBoundary()` / `nonWordBoundary()`
+- `space()` / `lineBreak()` / `tab()`
 - `anyOf(chars)` / `noneOf(chars)` / `range(from, to)`
 - `group(fn)` / `namedGroup(name, fn)` / `nonCapture(fn)`
 - `lookahead(fn)` / `negativeLookahead(fn)` / `lookbehind(fn)` / `negativeLookbehind(fn)`
 - `or(fn)` / `orLiteral(text)`
 - `optional()` / `zeroOrMore()` / `oneOrMore()` / `repeat(min, max?)`
 - `flags(flags)` / `toString()` / `toRegExp(flags?)`
+- `matches(input, flags?)`
+- `clone()`
 
 ## Quick examples
 
