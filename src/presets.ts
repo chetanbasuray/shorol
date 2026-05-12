@@ -35,9 +35,37 @@ export const hexColorPattern = regex()
 
 export const hexColorRegex = new RegExp(hexColorPattern);
 
+export const isoDatePatternBasic = regex()
+  .start()
+  .digit()
+  .repeat(4)
+  .literal("-")
+  .digit()
+  .repeat(2)
+  .literal("-")
+  .digit()
+  .repeat(2)
+  .end()
+  .toString();
+
+export const isoDateRegexBasic = new RegExp(isoDatePatternBasic);
+
+export const usernamePatternBasic = regex()
+  .start()
+  .anyOf("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_")
+  .repeat(3, 30)
+  .end()
+  .toString();
+
+export const usernameRegexBasic = new RegExp(usernamePatternBasic);
+
 export const presetsRegistry = {
   uuidPatternBasic,
   uuidRegexBasic,
   hexColorPattern,
-  hexColorRegex
+  hexColorRegex,
+  isoDatePatternBasic,
+  isoDateRegexBasic,
+  usernamePatternBasic,
+  usernameRegexBasic
 };
