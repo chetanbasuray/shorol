@@ -127,6 +127,8 @@ describe("shorol regex builder", () => {
     expect(re.flags).toBe("i");
     const override = regex().literal("hi").flags("i").toRegExp("g");
     expect(override.flags).toBe("g");
+    const re2 = regex().literal("hi").flags("d").toRegExp();
+    expect(re2.flags).toBe("d");
   });
 
   it("supports convenience flag helpers", () => {
@@ -143,6 +145,7 @@ describe("shorol regex builder", () => {
     expect(() => regex().flags("z")).toThrow("Invalid flag 'z'");
     expect(() => regex().flags("igz")).toThrow("Invalid flag 'z'");
     expect(() => regex().flags("1")).toThrow("Invalid flag '1'");
+    expect(() => regex().flags("dz")).toThrow("Invalid flag 'z'");
   });
 
   it("rejects duplicate flags in flags()", () => {
@@ -159,9 +162,11 @@ describe("shorol regex builder", () => {
     expect(re.flags).toBe("gim");
   });
 
-  it("supports multiline, dotAll, and unicode helpers", () => {
+  it("supports multiline, dotAll, unicode, and hasIndices helpers", () => {
     const re = regex().literal("hi").multiline().dotAll().unicode().toRegExp();
     expect(re.flags).toBe("msu");
+    const re2 = regex().literal("hi").hasIndices().toRegExp();
+    expect(re2.flags).toBe("d");
   });
 
   it("builds RegExp with flags", () => {
@@ -169,6 +174,8 @@ describe("shorol regex builder", () => {
     expect(re).toBeInstanceOf(RegExp);
     expect(re.flags).toBe("i");
     expect(re.source).toBe("hi");
+    const re2 = regex().literal("hi").toRegExp("d");
+    expect(re2.flags).toBe("d");
   });
 
   it("enforces anchors and token sequencing rules", () => {
@@ -230,5 +237,77 @@ describe("shorol regex builder", () => {
   it("guards internal token access", () => {
     const builder = regex() as unknown as { getToken: (index: number) => string };
     expect(() => builder.getToken(0)).toThrow("Missing token at index");
+  });
+
+  it("lazy() makes the previous quantifier non-greedy", () => {
+    expect(regex().literal("a").optional().lazy().toString()).toBe("a??");
+    expect(regex().literal("a").zeroOrMore().lazy().toString()).toBe("a*?");
+    expect(regex().literal("a").oneOrMore().lazy().toString()).toBe("a+?");
+    expect(regex().literal("a").repeat(3).lazy().toString()).toBe("a{3}?");
+    expect(regex().literal("a").repeat(2, 5).lazy().toString()).toBe("a{2,5}?");
+  });
+
+  it("lazy() groups multi-char tokens", () => {
+    expect(regex().literal("ab").oneOrMore().lazy().toString()).toBe("(?:ab)+?");
+  });
+
+  it("lazy() throws without a quantifier", () => {
+    expect(() => regex().literal("a").lazy()).toThrow("lazy() requires a preceding quantifier");
+    expect(() => regex().start().lazy()).toThrow();
+    expect(() => regex().lazy()).toThrow();
+  });
+
+  it("lazy() throws when applied twice", () => {
+    expect(() => regex().literal("a").oneOrMore().lazy().lazy()).toThrow("lazy() can only be applied once");
+  });
+
+  it("backreference() by number adds \\n", () => {
+    expect(regex().backreference(1).toString()).toBe("\\1");
+    expect(regex().backreference(12).toString()).toBe("\\12");
+    expect(() => regex().backreference(0)).toThrow("positive integer");
+    expect(() => regex().backreference(-1)).toThrow("positive integer");
+    expect(() => regex().backreference(1.5)).toThrow("positive integer");
+  });
+
+  it("backreference() by name adds \\k<name>", () => {
+    expect(regex().backreference("name").toString()).toBe("\\k<name>");
+    expect(regex().backreference("group_1").toString()).toBe("\\k<group_1>");
+    expect(() => regex().backreference("")).toThrow("non-empty name");
+  });
+
+  it("unicodeProperty() adds \\p{Name}", () => {
+    expect(regex().unicodeProperty("Letter").toString()).toBe("\\p{Letter}");
+    expect(regex().unicodeProperty("Script", "Greek").toString()).toBe("\\p{Script=Greek}");
+    expect(() => regex().unicodeProperty("")).toThrow("non-empty property name");
+    expect(() => regex().unicodeProperty("Letter", "")).toThrow("non-empty value");
+  });
+
+  it("raw() injects without escaping", () => {
+    expect(regex().raw("\\d{3}").toString()).toBe("\\d{3}");
+    expect(regex().raw("(?=look)").toString()).toBe("(?=look)");
+    expect(() => regex().raw("")).toThrow("non-empty string");
+  });
+
+  it("raw() after end() still throws", () => {
+    expect(() => regex().end().raw("x")).toThrow();
+  });
+
+  it("oneOf() matches any alternative", () => {
+    expect(
+      regex().oneOf(
+        (b) => b.literal("cat"),
+        (b) => b.literal("dog"),
+        (b) => b.literal("bird")
+      ).toString()
+    ).toBe("(?:cat|dog|bird)");
+  });
+
+  it("oneOfLiteral() convenience with strings", () => {
+    expect(regex().oneOfLiteral("yes", "no", "maybe").toString()).toBe("(?:yes|no|maybe)");
+    expect(() => regex().oneOfLiteral("only")).toThrow("requires at least two alternatives");
+  });
+
+  it("oneOf() throws with less than 2 alternatives", () => {
+    expect(() => regex().oneOf((b) => b.literal("x"))).toThrow("requires at least two alternatives");
   });
 });
