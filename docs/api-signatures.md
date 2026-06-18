@@ -7,11 +7,14 @@ This file is used by `doc-sync-check` to detect documentation drift for exported
 `class Builder`
 `Builder.start(): this`
 `Builder.end(): this`
+`Builder.lazy(): this`
 `Builder.literal(text: string): this`
 `Builder.anyOf(chars: string | string[]): this`
 `Builder.noneOf(chars: string | string[]): this`
 `Builder.range(from: string, to: string): this`
+`Builder.raw(str: string): this`
 `Builder.any(): this`
+`Builder.backreference(ref: number | string): this`
 `Builder.digit(): this`
 `Builder.word(): this`
 `Builder.wordBoundary(): this`
@@ -22,12 +25,15 @@ This file is used by `doc-sync-check` to detect documentation drift for exported
 `Builder.lineBreak(): this`
 `Builder.tab(): this`
 `Builder.group(fn: BuildFn): this`
+`Builder.hasIndices(): this`
 `Builder.namedGroup(name: string, fn: BuildFn): this`
 `Builder.nonCapture(fn: BuildFn): this`
 `Builder.lookahead(fn: BuildFn): this`
 `Builder.negativeLookahead(fn: BuildFn): this`
 `Builder.lookbehind(fn: BuildFn): this`
 `Builder.negativeLookbehind(fn: BuildFn): this`
+`Builder.oneOf(...alternatives: BuildFn[]): this`
+`Builder.oneOfLiteral(...alternatives: string[]): this`
 `Builder.or(fn: BuildFn): this`
 `Builder.orLiteral(text: string): this`
 `Builder.optional(): this`
@@ -42,6 +48,7 @@ This file is used by `doc-sync-check` to detect documentation drift for exported
 `Builder.multiline(): this`
 `Builder.dotAll(): this`
 `Builder.unicode(): this`
+`Builder.unicodeProperty(name: string, value?: string): this`
 `Builder.toString(): string`
 `Builder.toRegExp(flags?: string): RegExp`
 `Builder.matches(input: string, flags?: string): boolean`

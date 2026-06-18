@@ -2,97 +2,93 @@
 
 This document tracks Shorol's planned features and improvement ideas by release bucket and theme.
 
-## 1.4.x (near-term, additive)
+## Versioning Policy
 
-**Milestone**: Due 2026-05-02 — Near-term additive improvements to the builder, docs, and registry examples.
+A change is **BREAKING** if it could alter the result of code a user already wrote. For this library that explicitly includes:
 
-### Builder API & DSL
-- Add `flags()` convenience methods (`global`, `ignoreCase`, `multiline`, `dotAll`, `unicode`).
+- Rejecting input that previously produced a pattern (tightening any validation so a previously-accepted chain now throws).
+- Changing the emitted pattern string for a valid chain, or changing any exported `*Pattern` / `*Regex` value, even if the compiled RegExp is behaviorally equivalent.
+- Renaming/removing a public method, or changing public TypeScript types non-additively.
 
-### Presets / Registry
-- Add example: UUID builder pattern (docs-only, beginner-friendly).
+There is no patch/minor carve-out for "it was invalid anyway." If it is breaking, it goes to the `2.0.0` (`2.x`) line. Additive → minor. True fix with no API/output change → patch.
 
-### DX / Docs / Tooling
-- Add `noneOf()` / `range()` doc examples in README + `docs/llms.txt`.
-- Add builder examples for lookarounds + named groups in docs.
-- Add `regexRegistry` docs for extending patterns.
+Each item below is tagged with its semver impact: `[major]`, `[minor]`, or `[patch]`.
 
-## 1.5.x (medium-term)
+---
 
-**Milestone**: Due 2026-06-21 — Medium-term preset module and validation improvements.
+## Shipped
 
-### Presets / Registry
-- Preset module design: `shorol/presets` (scoped patterns).
-- Add `uuidPatternBasic` preset (explicit scope).
-- Add `hexColorPattern` preset (explicit scope).
+Items already released with their version.
 
-### Validation / Error Handling
-- Error messaging improvements for invalid group names.
+### 1.7.0
+- `[minor]` Add `wordBoundary`, `nonWordBoundary` helpers.
+- `[minor]` Add `lineBreak`, `tab` helpers.
+- `[minor]` Add `letter()` helper for `[a-zA-Z]`.
+- `[minor]` Add `space()` helper for literal spaces.
+- `[minor]` Add `matches(input: string)` helper for quick checks.
+- `[minor]` Add `clone()` method for safe branching.
+- `[minor]` Add `isoDatePatternBasic` preset.
+- `[minor]` Add `usernamePatternBasic` preset.
+- `[patch]` Export `escapeLiteral` helper for reuse.
 
-### DX / Docs / Tooling
-- Add contributor guide section: “How to add presets safely”.
+### 1.8.0
+- `[minor]` Add repeat aliases (`exactly`, `between`).
+- `[minor]` Validate `flags()` input for invalid or duplicate flags.
 
-## 1.6.x (near-term)
+### 1.8.x (pending patch release)
+- `[patch]` Add `docs/` to npm package files so subpath exports resolve.
+- `[patch]` CI matrix + `npm ci` hardening.
 
-**Milestone**: Due 2026-05-09 — Near-term ergonomics and docs improvements.
+---
 
-### Builder API & DSL
-- Add word boundary helpers (`wordBoundary`, `nonWordBoundary`).
-- Add line break and tab helpers (`lineBreak`, `tab`).
-- Add `letter()` helper for `[a-zA-Z]`.
-- Add `space()` helper for literal spaces.
-- Add `matches(input: string)` helper for quick checks.
+## 1.9.x — Additive features
 
-### DX / Docs / Tooling
-- Add presets usage + scope disclaimer to README and `docs/llms.txt`.
-- Add preset test case template snippet to README.
-- Add presets index doc (`docs/presets.md`) listing name, scope, examples.
-- Add a “Good First Issue” template to guide new contributors.
-- Add an example gallery in README (recipes).
-
-## 1.7.x (medium-term)
-
-**Milestone**: Due 2026-06-28 — Scoped preset expansion and contributor DX.
-
-### Presets / Registry
-- Add `isoDatePatternBasic` preset (YYYY-MM-DD, scoped).
-- Add `usernamePatternBasic` preset (3–30, alnum+underscore).
-
-### DX / Docs / Tooling
-- Add a preset test template to `docs/PRESETS_GUIDE.md`.
-- Export `escapeLiteral` helper for reuse (documented).
-- Add a design rules section (no inline regex, naming conventions).
-
-## 1.8.x (later 1.x)
-
-**Milestone**: Due 2026-09-28 — Builder polish and validation hardening.
+**Theme:** Feature additions from the former 2.x bucket that are non-breaking.
 
 ### Builder API & DSL
-- Add repeat aliases (`exactly`, `between`).
-
-### Validation / Error Handling
-- Validate `flags()` input for invalid or duplicate flags.
-
-## 2.x (larger scope)
-
-**Milestone**: Due 2026-09-21 — Larger-scope 2.x work: extensibility, AST, and policy/migration docs.
-
-### Builder API & DSL
-- Optional AST output for builder (pattern introspection).
-- Builder plugin hooks / custom tokens API.
-- Add `explain()` output for builder chains.
-- Add typed named-groups helper (TypeScript).
-- Add `clone()` method for safe branching.
+- `[minor]` Add `explain()` output for builder chains.
+- `[minor]` Optional AST output for builder (pattern introspection).
+- `[minor]` Builder plugin hooks / custom tokens API.
 
 ### Presets / Registry
-- Preset validation policy & test matrix (locale-dependent).
+- `[minor]` Preset validation policy & test matrix (locale-dependent).
 
 ### DX / Docs / Tooling
-- Structured migration guide for 2.x.
-- Add preset scopes + validation policy doc.
+- `[minor]` Structured migration guide for 2.x.
+- `[minor]` Preset scopes + validation policy doc.
+
+---
+
+## 2.0.0 — Breaking changes
+
+**Theme:** Validation hardening, end() lock, and pattern output stability.
+
+### Builder API & DSL
+- `[major]` `end()` locks pattern mutation (quantifiers, alternation after `$` throw).
+- `[major]` `repeat()` rejects non-integer bounds.
+- `[major]` `range()` requires single code-point bounds.
+- `[major]` Char classes no longer wrapped in `(?:...)` groups under quantifiers (output change).
+- `[major]` Nested quantifiers rejected at build time.
+- `[major]` Typed named groups helper (TypeScript) — public type change.
+
+### DX / Docs / Tooling
+- `[minor]` Migration guide for 2.0.0 changes.
+
+---
+
+## 2.x (future)
+
+Larger-scope breaking work beyond 2.0.0.
+
+### Builder API & DSL
+- `[major]` `or()` → whole-expression alternation (scope change).
+- `[major]` Rename `letter()` / `word()` to unicode-aware variants.
+
+---
 
 ## Contributing new ideas
 
 - Open an issue with a short proposal and examples.
 - Keep additions small and composable.
 - Prefer features that improve readability or safety.
+- Tag your issue with the semver impact (`[major]`, `[minor]`, `[patch]`) so it can be routed to the correct milestone.
