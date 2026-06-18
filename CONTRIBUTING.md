@@ -14,7 +14,11 @@ Thanks for your interest in contributing!
 ## Release Branch Policy
 
 - PRs to `main` must come from `release/*` or `hotfix/*` branches.
-- Feature work should target the active release branch (e.g. `release/1.6.x`).
+- Feature work should target the active release branch (e.g. `release/1.9.x`).
+
+## Versioning Policy
+
+This project follows strict semantic versioning. See [FEATURES.md](./FEATURES.md#versioning-policy) for the exact definition of breaking, minor, and patch changes for this library.
 
 ## Development Setup
 
