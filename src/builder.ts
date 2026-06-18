@@ -2,7 +2,7 @@
 type BuildFn = (builder: Builder) => Builder;
 
 const META_CHARS = /[.*+?^${}()|[\]\\]/g;
-const VALID_FLAGS = "gimsuy";
+const VALID_FLAGS = "dgimsuy";
 
 /**
  * Escape regex metacharacters in a literal string.
@@ -56,6 +56,7 @@ export class Builder {
   private tokens: string[] = [];
   private started = false;
   private ended = false;
+  private lastTokenLazy = false;
   private storedFlags?: string;
 
   private ensureCanAdd(): void {
@@ -67,6 +68,7 @@ export class Builder {
   private addToken(token: string): this {
     this.ensureCanAdd();
     this.tokens.push(token);
+    this.lastTokenLazy = false;
     return this;
   }
 
@@ -90,6 +92,7 @@ export class Builder {
     const token = this.getToken(index);
     const grouped = needsQuantifierGrouping(token) ? `(?:${token})` : token;
     this.tokens[index] = `${grouped}${suffix}`;
+    this.lastTokenLazy = false;
     return this;
   }
 
@@ -294,6 +297,74 @@ export class Builder {
     return this.repeat(count);
   }
 
+  /** Match any of the given alternatives, e.g. `oneOf(cat, dog)` => `(?:cat|dog)`. */
+  oneOf(...alternatives: BuildFn[]): this {
+    if (alternatives.length < 2) {
+      throw new Error("oneOf() requires at least two alternatives");
+    }
+    const parts = alternatives.map((fn) => fn(new Builder()).toString());
+    return this.addToken(`(?:${parts.join("|")})`);
+  }
+
+  /** Convenience for `oneOf` with literal strings. */
+  oneOfLiteral(...alternatives: string[]): this {
+    return this.oneOf(...alternatives.map((s) => (b: Builder) => b.literal(s)));
+  }
+
+  /** Inject a raw regex string without escaping. Use sparingly for edge cases the builder does not cover. */
+  raw(str: string): this {
+    if (str.length === 0) {
+      throw new Error("raw(str) requires a non-empty string");
+    }
+    return this.addToken(str);
+  }
+
+  /** Add a Unicode property escape (`\\p{Name}` or `\\p{Name=Value}`). Requires the `u` flag at runtime. */
+  unicodeProperty(name: string, value?: string): this {
+    if (name.length === 0) {
+      throw new Error("unicodeProperty(name) requires a non-empty property name");
+    }
+    if (value !== undefined) {
+      if (value.length === 0) {
+        throw new Error("unicodeProperty(name, value) requires a non-empty value");
+      }
+      return this.addToken(`\\p{${name}=${value}}`);
+    }
+    return this.addToken(`\\p{${name}}`);
+  }
+
+  /** Add a backreference by group number (`\\n`) or group name (`\\k<name>`). */
+  backreference(ref: number | string): this {
+    if (typeof ref === "number") {
+      if (!Number.isInteger(ref) || ref < 1) {
+        throw new Error("backreference(n) requires a positive integer");
+      }
+      return this.addToken(`\\${ref}`);
+    }
+    if (ref.length === 0) {
+      throw new Error("backreference(name) requires a non-empty name");
+    }
+    return this.addToken(`\\k<${ref}>`);
+  }
+
+  /** Make the previous quantifier non-greedy (`??`, `*?`, `+?`, `{n}?`, `{n,m}?`). */
+  lazy(): this {
+    if (this.lastTokenLazy) {
+      throw new Error("lazy() can only be applied once");
+    }
+    const index = this.requireLast();
+    const token = this.getToken(index);
+    const lastChar = token[token.length - 1];
+    if (!lastChar || (!"*+?".includes(lastChar) && lastChar !== "}")) {
+      throw new Error(
+        "lazy() requires a preceding quantifier (optional, zeroOrMore, oneOrMore, or repeat)"
+      );
+    }
+    this.tokens[index] = `${token}?`;
+    this.lastTokenLazy = true;
+    return this;
+  }
+
   /** Alias for `repeat(min, max)`. Repeats the previous token between `min` and `max` times (`{min,max}`). */
   between(min: number, max: number): this {
     return this.repeat(min, max);
@@ -307,7 +378,7 @@ export class Builder {
     for (const ch of flags) {
       if (!VALID_FLAGS.includes(ch)) {
         throw new Error(
-          `Invalid flag '${ch}'. Allowed flags are: g, i, m, s, u, y`
+          `Invalid flag '${ch}'. Allowed flags are: d, g, i, m, s, u, y`
         );
       }
     }
@@ -354,6 +425,11 @@ export class Builder {
     return this.appendFlag("u");
   }
 
+  /** Enable hasIndices ("d") flag. */
+  hasIndices(): this {
+    return this.appendFlag("d");
+  }
+
   /** Build the raw regex pattern string. */
   toString(): string {
     return this.tokens.join("");
@@ -365,6 +441,7 @@ export class Builder {
     next.tokens = [...this.tokens];
     next.started = this.started;
     next.ended = this.ended;
+    next.lastTokenLazy = this.lastTokenLazy;
     next.storedFlags = this.storedFlags;
     return next;
   }
