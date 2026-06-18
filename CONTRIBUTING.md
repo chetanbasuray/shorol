@@ -14,7 +14,11 @@ Thanks for your interest in contributing!
 ## Release Branch Policy
 
 - PRs to `main` must come from `release/*` or `hotfix/*` branches.
-- Feature work should target the active release branch (e.g. `release/1.6.x`).
+- Feature work should target the active release branch (e.g. `release/1.9.x`).
+
+## Versioning Policy
+
+This project follows strict semantic versioning. See [FEATURES.md](./FEATURES.md#versioning-policy) for the exact definition of breaking, minor, and patch changes for this library.
 
 ## Development Setup
 
@@ -26,25 +30,18 @@ Thanks for your interest in contributing!
 
 ## Regex Policy
 
-To keep regex readable and centralized, all regex patterns must live in `src/regexes.ts`.
+All regex patterns must be built with the fluent builder. Both `src/regexes.ts` (general-purpose registry) and `src/presets.ts` (scoped presets) follow this rule. Avoid inline regex literals in feature code.
 
-Example:
+### Naming Convention
 
-```ts
-import { regex } from "./builder";
-
-export const slugBuilder = () =>
-  regex().start().word().oneOrMore().nonCapture((b) => b.literal("-").word().oneOrMore()).zeroOrMore().end();
-
-export const slugPattern = slugBuilder().toString();
-export const slugRegex = slugBuilder().toRegExp();
-```
+- Export `<name>Builder` (factory function returning a Builder), `<name>Pattern` (raw string), and `<name>Regex` (compiled RegExp).
+- Presets use explicit, scoped names (e.g., `uuidPatternBasic`). See `docs/PRESETS_GUIDE.md`.
 
 ### Do / Don’t
 
 | Do | Don’t |
 | --- | --- |
-| Add new patterns to `src/regexes.ts` | Inline regex literals in feature code |
+| Add new patterns to `src/regexes.ts` or `src/presets.ts` | Inline regex literals in feature code |
 | Export both `Pattern` and `Regex` | Export only a raw `/.../` regex |
 | Use the fluent builder for clarity | Hand-write complex regex strings |
 
