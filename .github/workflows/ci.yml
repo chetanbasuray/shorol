@@ -17,11 +17,14 @@ jobs:
         with:
           node-version: 20
           cache: "npm"
-      - run: npm install
+      - run: npm ci
       - run: npm run lint
 
   code_coverage:
     name: Code Coverage
+    strategy:
+      matrix:
+        node: [18, 20, 22]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -29,9 +32,9 @@ jobs:
           fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: ${{ matrix.node }}
           cache: "npm"
-      - run: npm install
+      - run: npm ci
       - run: npm run test:coverage
 
   doc_sync:
@@ -45,11 +48,14 @@ jobs:
         with:
           node-version: 20
           cache: "npm"
-      - run: npm install
+      - run: npm ci
       - run: npm run docs:sync
 
   ci:
     name: CI
+    strategy:
+      matrix:
+        node: [18, 20, 22]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -57,9 +63,9 @@ jobs:
           fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: ${{ matrix.node }}
           cache: "npm"
-      - run: npm install
+      - run: npm ci
       - run: npm run typecheck
       - run: npm run build
       - name: Commitlint (main only)
@@ -83,7 +89,7 @@ jobs:
           node-version: 24.x
           cache: "npm"
           registry-url: "https://registry.npmjs.org"
-      - run: npm install
+      - run: npm ci
       - run: npm run build
       - run: npx semantic-release --dry-run --no-ci
         env:
