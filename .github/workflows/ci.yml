@@ -75,6 +75,26 @@ jobs:
         if: ${{ github.event_name != 'pull_request' }}
         run: npm run commitlint
 
+  commitlint_pr:
+    name: Commitlint (PR)
+    if: ${{ github.event_name == 'pull_request' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+      - run: npm ci
+      - uses: wagoid/commitlint-github-action@v6
+        with:
+          configFile: commitlint.config.cjs
+
   release_preview:
     needs: [lint, code_coverage, doc_sync, ci]
     if: ${{ github.event_name == 'pull_request' }}
