@@ -177,6 +177,29 @@ describe("shorol regex builder", () => {
     expect(() => regex().end().literal("a")).toThrow();
   });
 
+  it("blocks mutations after end()", () => {
+    expect(() => regex().literal("a").end().optional()).toThrow("Cannot add tokens");
+    expect(() => regex().literal("a").end().orLiteral("b")).toThrow("Cannot add tokens");
+    expect(() => regex().literal("a").end().global()).toThrow("Cannot add tokens");
+    expect(() => regex().literal("a").end().flags("i")).toThrow("Cannot add tokens");
+  });
+
+  it("rejects nested quantifiers", () => {
+    expect(() => regex().literal("a").oneOrMore().oneOrMore()).toThrow("already-quantified");
+    expect(() => regex().literal("a").optional().zeroOrMore()).toThrow("already-quantified");
+    expect(() => regex().literal("a").repeat(2).oneOrMore()).toThrow("already-quantified");
+  });
+
+  it("accepts single code point in range()", () => {
+    const emoji = regex().range("😀", "😎").toString();
+    expect(emoji).toBe("[😀-😎]");
+  });
+
+  it("documents single-token-scope alternation", () => {
+    const pattern = regex().literal("a").literal("b").orLiteral("c").toString();
+    expect(pattern).toBe("a(?:b|c)");
+  });
+
   it("throws when applying quantifiers without a previous token", () => {
     expect(() => regex().optional()).toThrow();
     expect(() => regex().zeroOrMore()).toThrow();
@@ -190,18 +213,25 @@ describe("shorol regex builder", () => {
     expect(group).toBe("(ab)+");
     const digit = regex().digit().oneOrMore().toString();
     expect(digit).toBe("\\d+");
+    const charClass = regex().anyOf("abc").oneOrMore().toString();
+    expect(charClass).toBe("[abc]+");
+    const negClass = regex().noneOf("abc").oneOrMore().toString();
+    expect(negClass).toBe("[^abc]+");
   });
 
   it("validates repeat ranges", () => {
     expect(() => regex().literal("a").repeat(-1)).toThrow();
     expect(() => regex().literal("a").repeat(2, 1)).toThrow();
     expect(() => regex().literal("a").repeat(1, Number.NaN)).toThrow();
+    expect(() => regex().literal("a").repeat(2.5)).toThrow();
+    expect(() => regex().literal("a").repeat(1, 2.5)).toThrow();
   });
 
   it("supports exactly() alias", () => {
     const pattern = regex().literal("a").exactly(3).toString();
     expect(pattern).toBe("a{3}");
     expect(() => regex().literal("a").exactly(-1)).toThrow();
+    expect(() => regex().literal("a").exactly(1.5)).toThrow();
   });
 
   it("supports between() alias", () => {
@@ -214,6 +244,7 @@ describe("shorol regex builder", () => {
     expect(() => regex().anyOf([])).toThrow();
     expect(() => regex().noneOf("")).toThrow();
     expect(() => regex().range("", "a")).toThrow();
+    expect(() => regex().range("ab", "yz")).toThrow("one code point");
   });
 
   it("throws when or() is called without a previous token", () => {
