@@ -2,6 +2,7 @@
 type BuildFn = (builder: Builder) => Builder;
 
 const META_CHARS = /[.*+?^${}()|[\]\\]/g;
+const VALID_FLAGS = "gimsuy";
 
 /**
  * Escape regex metacharacters in a literal string.
@@ -288,8 +289,31 @@ export class Builder {
     return this.applyQuantifier(range);
   }
 
+  /** Alias for `repeat(count)`. Repeats the previous token exactly `count` times (`{n}`). */
+  exactly(count: number): this {
+    return this.repeat(count);
+  }
+
+  /** Alias for `repeat(min, max)`. Repeats the previous token between `min` and `max` times (`{min,max}`). */
+  between(min: number, max: number): this {
+    return this.repeat(min, max);
+  }
+
   /** Store default flags to use when calling `toRegExp()`. */
   flags(flags: string): this {
+    if (flags.length === 0) {
+      throw new Error("flags() requires at least one flag character");
+    }
+    for (const ch of flags) {
+      if (!VALID_FLAGS.includes(ch)) {
+        throw new Error(
+          `Invalid flag '${ch}'. Allowed flags are: g, i, m, s, u, y`
+        );
+      }
+    }
+    if (new Set(flags).size !== flags.length) {
+      throw new Error("flags() contains duplicate characters");
+    }
     this.storedFlags = flags;
     return this;
   }

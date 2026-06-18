@@ -139,6 +139,21 @@ describe("shorol regex builder", () => {
     expect(re.flags).toBe("gi");
   });
 
+  it("rejects invalid flags in flags()", () => {
+    expect(() => regex().flags("z")).toThrow("Invalid flag 'z'");
+    expect(() => regex().flags("igz")).toThrow("Invalid flag 'z'");
+    expect(() => regex().flags("1")).toThrow("Invalid flag '1'");
+  });
+
+  it("rejects duplicate flags in flags()", () => {
+    expect(() => regex().flags("gg")).toThrow("contains duplicate characters");
+    expect(() => regex().flags("igi")).toThrow("contains duplicate characters");
+  });
+
+  it("rejects empty flags string", () => {
+    expect(() => regex().flags("")).toThrow("requires at least one flag character");
+  });
+
   it("appends helper flags to stored flags", () => {
     const re = regex().literal("hi").flags("im").global().toRegExp();
     expect(re.flags).toBe("gim");
@@ -181,6 +196,18 @@ describe("shorol regex builder", () => {
     expect(() => regex().literal("a").repeat(-1)).toThrow();
     expect(() => regex().literal("a").repeat(2, 1)).toThrow();
     expect(() => regex().literal("a").repeat(1, Number.NaN)).toThrow();
+  });
+
+  it("supports exactly() alias", () => {
+    const pattern = regex().literal("a").exactly(3).toString();
+    expect(pattern).toBe("a{3}");
+    expect(() => regex().literal("a").exactly(-1)).toThrow();
+  });
+
+  it("supports between() alias", () => {
+    const pattern = regex().literal("a").between(2, 5).toString();
+    expect(pattern).toBe("a{2,5}");
+    expect(() => regex().literal("a").between(2, 1)).toThrow();
   });
 
   it("validates character class inputs", () => {

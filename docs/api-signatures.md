@@ -34,6 +34,8 @@ This file is used by `doc-sync-check` to detect documentation drift for exported
 `Builder.zeroOrMore(): this`
 `Builder.oneOrMore(): this`
 `Builder.repeat(min: number, max?: number): this`
+`Builder.exactly(count: number): this`
+`Builder.between(min: number, max: number): this`
 `Builder.flags(flags: string): this`
 `Builder.global(): this`
 `Builder.ignoreCase(): this`
