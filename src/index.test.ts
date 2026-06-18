@@ -180,14 +180,27 @@ describe("shorol regex builder", () => {
   it("blocks mutations after end()", () => {
     expect(() => regex().literal("a").end().optional()).toThrow("Cannot add tokens");
     expect(() => regex().literal("a").end().orLiteral("b")).toThrow("Cannot add tokens");
-    expect(() => regex().literal("a").end().global()).toThrow("Cannot add tokens");
-    expect(() => regex().literal("a").end().flags("i")).toThrow("Cannot add tokens");
+    expect(regex().literal("a").end().global().toRegExp().flags).toBe("g");
+    expect(regex().literal("a").end().flags("i").toRegExp().flags).toBe("i");
   });
 
   it("rejects nested quantifiers", () => {
     expect(() => regex().literal("a").oneOrMore().oneOrMore()).toThrow("already-quantified");
     expect(() => regex().literal("a").optional().zeroOrMore()).toThrow("already-quantified");
     expect(() => regex().literal("a").repeat(2).oneOrMore()).toThrow("already-quantified");
+  });
+
+  it("allows literals ending in escaped metacharacters under quantifiers", () => {
+    expect(() => regex().literal("https?").oneOrMore()).not.toThrow();
+    expect(regex().literal("https?").oneOrMore().toString()).toBe("(?:https\\?)+");
+    expect(() => regex().literal("c++").oneOrMore()).not.toThrow();
+    expect(regex().literal("c++").oneOrMore().toString()).toBe("(?:c\\+\\+)+");
+  });
+
+  it("carries quantified state across clone", () => {
+    const base = regex().literal("a").oneOrMore();
+    const cloned = base.clone();
+    expect(() => cloned.oneOrMore()).toThrow("already-quantified");
   });
 
   it("accepts single code point in range()", () => {
