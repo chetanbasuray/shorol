@@ -35,11 +35,18 @@ function isGroup(token: string): boolean {
   return token.startsWith("(") && token.endsWith(")");
 }
 
+function isCharClass(token: string): boolean {
+  return token.startsWith("[") && token.endsWith("]");
+}
+
 function needsQuantifierGrouping(token: string): boolean {
   if (token.length <= 1) {
     return false;
   }
   if (isGroup(token)) {
+    return false;
+  }
+  if (isCharClass(token)) {
     return false;
   }
   if (token.startsWith("\\") && token.length === 2) {
@@ -57,6 +64,7 @@ export class Builder {
   private started = false;
   private ended = false;
   private storedFlags?: string;
+  private lastTokenQuantified = false;
 
   private ensureCanAdd(): void {
     if (this.ended) {
@@ -67,6 +75,7 @@ export class Builder {
   private addToken(token: string): this {
     this.ensureCanAdd();
     this.tokens.push(token);
+    this.lastTokenQuantified = false;
     return this;
   }
 
@@ -86,10 +95,17 @@ export class Builder {
   }
 
   private applyQuantifier(suffix: string): this {
+    this.ensureCanAdd();
     const index = this.requireLast();
     const token = this.getToken(index);
+    if (this.lastTokenQuantified) {
+      throw new Error(
+        "Cannot apply quantifier to an already-quantified token. Use an explicit group if nesting is intentional."
+      );
+    }
     const grouped = needsQuantifierGrouping(token) ? `(?:${token})` : token;
     this.tokens[index] = `${grouped}${suffix}`;
+    this.lastTokenQuantified = true;
     return this;
   }
 
@@ -146,8 +162,8 @@ export class Builder {
    * Bounds are escaped for safety.
    */
   range(from: string, to: string): this {
-    if (from.length === 0 || to.length === 0) {
-      throw new Error("range(from, to) requires non-empty bounds");
+    if ([...from].length !== 1 || [...to].length !== 1) {
+      throw new Error("range(from, to) requires each bound to be exactly one code point");
     }
     const escapedFrom = escapeCharClass(from);
     const escapedTo = escapeCharClass(to);
@@ -247,12 +263,24 @@ export class Builder {
     return this.addToken(`(?<!${child.toString()})`);
   }
 
-  /** Add alternation with the previous token, e.g. `(?:left|right)`. */
+  /**
+   * Alternation scoped to the immediately previous token.
+   * Only that token is wrapped in the alternation group.
+   *
+   * @example
+   * ```ts
+   * regex().literal("a").literal("b").orLiteral("c").toString()
+   * // => "a(?:b|c)"   -- only "b" is alternated, not "ab"
+   * ```
+   */
+  // TODO: whole-expression alternation should be considered for a future major version.
   or(fn: BuildFn): this {
+    this.ensureCanAdd();
     const index = this.requireLast();
     const left = this.getToken(index);
     const right = fn(new Builder()).toString();
     this.tokens[index] = `(?:${left}|${right})`;
+    this.lastTokenQuantified = false;
     return this;
   }
 
@@ -278,11 +306,11 @@ export class Builder {
 
   /** Repeat the previous token with an explicit range (`{min}` or `{min,max}`). */
   repeat(min: number, max?: number): this {
-    if (min < 0 || !Number.isFinite(min)) {
-      throw new Error("repeat(min, max) requires min >= 0");
+    if (min < 0 || !Number.isInteger(min)) {
+      throw new Error("repeat(min, max) requires min to be a non-negative integer");
     }
-    if (max !== undefined && (max < min || !Number.isFinite(max))) {
-      throw new Error("repeat(min, max) requires max >= min");
+    if (max !== undefined && (max < min || !Number.isInteger(max))) {
+      throw new Error("repeat(min, max) requires max to be a non-negative integer >= min");
     }
 
     const range = max === undefined ? `{${min}}` : `{${min},${max}}`;
@@ -366,6 +394,7 @@ export class Builder {
     next.started = this.started;
     next.ended = this.ended;
     next.storedFlags = this.storedFlags;
+    next.lastTokenQuantified = this.lastTokenQuantified;
     return next;
   }
 
