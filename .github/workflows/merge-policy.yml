@@ -10,9 +10,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Validate head branch
+        env:
+          HEAD_REF: ${{ github.head_ref }}
         run: |
-          echo "PR from: ${{ github.head_ref }}"
-          if [[ "${{ github.head_ref }}" != release/* && "${{ github.head_ref }}" != hotfix/* ]]; then
+          echo "PR from: $HEAD_REF"
+          if [[ "$HEAD_REF" != release/* && "$HEAD_REF" != hotfix/* ]]; then
             echo "ERROR: PRs to main must come from release/* or hotfix/* branches."
             exit 1
           fi
