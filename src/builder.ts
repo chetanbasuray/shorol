@@ -297,7 +297,7 @@ export class Builder {
     return this.repeat(count);
   }
 
-  /** Match any of the given alternatives, e.g. `oneOf(cat, dog)` → `(?:cat|dog)`. */
+  /** Match any of the given alternatives, e.g. `oneOf(cat, dog)` => `(?:cat|dog)`. */
   oneOf(...alternatives: BuildFn[]): this {
     if (alternatives.length < 2) {
       throw new Error("oneOf() requires at least two alternatives");
