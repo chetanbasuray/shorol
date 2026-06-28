@@ -1,3 +1,10 @@
+## [2.1.4](https://github.com/chetanbasuray/shorol/compare/v2.1.3...v2.1.4) (2026-06-28)
+
+
+### Bug Fixes
+
+* enable npm provenance via NPM_CONFIG_PROVENANCE env var ([#131](https://github.com/chetanbasuray/shorol/issues/131)) ([e758d44](https://github.com/chetanbasuray/shorol/commit/e758d44bd3e66aecb5032686d266fe14398fc480))
+
 # [2.0.0](https://github.com/chetanbasuray/shorol/compare/v1.8.2...v2.0.0) (2026-06-18)
 
 
