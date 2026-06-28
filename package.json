@@ -45,7 +45,8 @@
   "types": "./dist/index.d.ts",
   "files": [
     "dist",
-    "docs"
+    "docs",
+    "README.md"
   ],
   "sideEffects": false,
   "engines": {
