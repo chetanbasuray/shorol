@@ -1,3 +1,10 @@
+## [2.1.3](https://github.com/chetanbasuray/shorol/compare/v2.1.2...v2.1.3) (2026-06-28)
+
+
+### Bug Fixes
+
+* configure git identity in release workflow before commit ([#130](https://github.com/chetanbasuray/shorol/issues/130)) ([006916b](https://github.com/chetanbasuray/shorol/commit/006916b3ae6cd02a0e140b6a5c59f403d0e87cfb))
+
 # [2.0.0](https://github.com/chetanbasuray/shorol/compare/v1.8.2...v2.0.0) (2026-06-18)
 
 
