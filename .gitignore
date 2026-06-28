@@ -6,3 +6,4 @@ dist/
 coverage/
 *.log
 .doc-sync-cache.json
+.doc-sync-cache.json
