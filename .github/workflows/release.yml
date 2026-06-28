@@ -31,38 +31,8 @@ jobs:
       - run: npm ci
       - run: npm run build
       - run: npm run release
-        id: release
-        continue-on-error: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           HUSKY: 0
-
-      - name: Create release PR
-        run: |
-          if ! git diff --quiet -- package.json; then
-            VERSION=$(node -p "require('./package.json').version")
-            TAG="v$VERSION"
-            BRANCH="release/v$VERSION"
-
-            git checkout -b "$BRANCH"
-            git add package.json CHANGELOG.md
-            git commit -m "chore(release): $TAG [skip ci]"
-            git push origin "$BRANCH"
-
-            PR_URL=$(gh pr create \
-              --base main \
-              --head "$BRANCH" \
-              --title "chore(release): $TAG" \
-              --body "Automated release PR for $TAG" \
-              --label release)
-            gh pr merge "$PR_URL" \
-              --squash \
-              --admin \
-              --subject "chore(release): $TAG"
-          else
-            echo "No version bump detected — no release PR needed"
-          fi
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
