@@ -74,3 +74,22 @@ This file is used by `doc-sync-check` to detect documentation drift for exported
 `const usernamePatternBasic`
 `const usernameRegexBasic`
 `const presetsRegistry`
+
+## Preset Full Signatures
+
+`const slugBuilder = () => regex() .start() .word() .oneOrMore() .nonCapture((b) => b.literal("-").word().oneOrMore()) .zeroOrMore() .end()`
+`const slugPattern = slugBuilder().toString()`
+`const slugRegex = slugBuilder().toRegExp()`
+`const identifierBuilder = () => regex().start().word().oneOrMore().end()`
+`const identifierPattern = identifierBuilder().toString()`
+`const identifierRegex = identifierBuilder().toRegExp()`
+`const regexRegistry = { slugBuilder, slugPattern, slugRegex, identifierBuilder, identifierPattern, identifierRegex }`
+`const uuidPatternBasic = regex() .start() .anyOf(HEX_CHARS) .repeat(8) .literal("-") .anyOf(HEX_CHARS) .repeat(4) .literal("-") .literal("4") .anyOf(HEX_CHARS) .repeat(3) .literal("-") .anyOf("89abAB") .anyOf(HEX_CHARS) .repeat(3) .literal("-") .anyOf(HEX_CHARS) .repeat(12) .end() .toString()`
+`const uuidRegexBasic = new RegExp(uuidPatternBasic)`
+`const hexColorPattern = regex() .start() .literal("#") .optional() .nonCapture((b) => b.anyOf(HEX_CHARS).repeat(3).or((o) => o.anyOf(HEX_CHARS).repeat(6))) .end() .toString()`
+`const hexColorRegex = new RegExp(hexColorPattern)`
+`const isoDatePatternBasic = regex() .start() .digit() .repeat(4) .literal("-") .digit() .repeat(2) .literal("-") .digit() .repeat(2) .end() .toString()`
+`const isoDateRegexBasic = new RegExp(isoDatePatternBasic)`
+`const usernamePatternBasic = regex() .start() .anyOf("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_") .repeat(3, 30) .end() .toString()`
+`const usernameRegexBasic = new RegExp(usernamePatternBasic)`
+`const presetsRegistry = { uuidPatternBasic, uuidRegexBasic, hexColorPattern, hexColorRegex, isoDatePatternBasic, isoDateRegexBasic, usernamePatternBasic, usernameRegexBasic }`
