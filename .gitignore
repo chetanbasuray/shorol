@@ -5,3 +5,4 @@ dist/
 .env.*
 coverage/
 *.log
+.doc-sync-cache.json
