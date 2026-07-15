@@ -1,3 +1,66 @@
+## [2.1.5](https://github.com/chetanbasuray/shorol/compare/v2.1.4...v2.1.5) (2026-06-28)
+
+
+### Bug Fixes
+
+* remove stale create-release-pr step from release workflow ([#132](https://github.com/chetanbasuray/shorol/issues/132)) ([547def2](https://github.com/chetanbasuray/shorol/commit/547def24b757a2dff30dd62572987bc7cad36693))
+
+## [2.1.4](https://github.com/chetanbasuray/shorol/compare/v2.1.3...v2.1.4) (2026-06-28)
+
+
+### Bug Fixes
+
+* enable npm provenance via NPM_CONFIG_PROVENANCE env var ([#131](https://github.com/chetanbasuray/shorol/issues/131)) ([e758d44](https://github.com/chetanbasuray/shorol/commit/e758d44bd3e66aecb5032686d266fe14398fc480))
+
+## [2.1.3](https://github.com/chetanbasuray/shorol/compare/v2.1.2...v2.1.3) (2026-06-28)
+
+
+### Bug Fixes
+
+* configure git identity in release workflow before commit ([#130](https://github.com/chetanbasuray/shorol/issues/130)) ([006916b](https://github.com/chetanbasuray/shorol/commit/006916b3ae6cd02a0e140b6a5c59f403d0e87cfb))
+
+## [2.1.2](https://github.com/chetanbasuray/shorol/compare/v2.1.1...v2.1.2) (2026-06-28)
+
+
+### Bug Fixes
+
+* include README.md in npm package files ([75f5644](https://github.com/chetanbasuray/shorol/commit/75f56448a6dcfdd8cc4b87339e823c35262741a5))
+
+## [2.1.1](https://github.com/chetanbasuray/shorol/compare/v2.1.0...v2.1.1) (2026-06-28)
+
+
+### Bug Fixes
+
+* allow fix, bugfix, chore, feat branch prefixes in merge policy ([02ba315](https://github.com/chetanbasuray/shorol/commit/02ba31547bb45e41818b58b51590494bf37deac8))
+
+# [2.1.0](https://github.com/chetanbasuray/shorol/compare/v2.0.3...v2.1.0) (2026-06-28)
+
+
+### Features
+
+* auto-close dependabot PRs less than 2 weeks old ([2259577](https://github.com/chetanbasuray/shorol/commit/225957756ac822e8cfe2cd7fb5b6bb749cec61d1))
+
+## [2.0.3](https://github.com/chetanbasuray/shorol/compare/v2.0.2...v2.0.3) (2026-06-21)
+
+
+### Bug Fixes
+
+* disable body-max-line-length rule for dependabot commits ([3336a2e](https://github.com/chetanbasuray/shorol/commit/3336a2eb9068f2a0e148a6d15ee03767f08ad782))
+
+## [2.0.2](https://github.com/chetanbasuray/shorol/compare/v2.0.1...v2.0.2) (2026-06-21)
+
+
+### Bug Fixes
+
+* allow dependabot branches in merge policy ([#120](https://github.com/chetanbasuray/shorol/issues/120)) ([b9810d4](https://github.com/chetanbasuray/shorol/commit/b9810d464f5686b889007282e13b673db1c7a4a6))
+
+## [2.0.1](https://github.com/chetanbasuray/shorol/compare/v2.0.0...v2.0.1) (2026-06-18)
+
+
+### Bug Fixes
+
+* check git diff instead of tag existence in release PR step ([d9ba3bb](https://github.com/chetanbasuray/shorol/commit/d9ba3bb2d6f9aa9207814f2c6f72b769acf358da))
+
 # [2.0.0](https://github.com/chetanbasuray/shorol/compare/v1.8.2...v2.0.0) (2026-06-18)
 
 
