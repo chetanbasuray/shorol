@@ -1,3 +1,10 @@
+## [2.1.8](https://github.com/chetanbasuray/shorol/compare/v2.1.7...v2.1.8) (2026-07-15)
+
+
+### Bug Fixes
+
+* make releases manual and restrict triggers to fix, feat, and breaking changes ([#142](https://github.com/chetanbasuray/shorol/issues/142)) ([1ffa98c](https://github.com/chetanbasuray/shorol/commit/1ffa98c8688195828390c1bea33fedbdcd559b3d))
+
 ## [2.1.5](https://github.com/chetanbasuray/shorol/compare/v2.1.4...v2.1.5) (2026-06-28)
 
 
