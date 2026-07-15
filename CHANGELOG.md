@@ -5,6 +5,13 @@
 
 * make releases manual and restrict triggers to fix, feat, and breaking changes ([#142](https://github.com/chetanbasuray/shorol/issues/142)) ([1ffa98c](https://github.com/chetanbasuray/shorol/commit/1ffa98c8688195828390c1bea33fedbdcd559b3d))
 
+## [2.1.7](https://github.com/chetanbasuray/shorol/compare/v2.1.6...v2.1.7) (2026-07-15)
+
+
+### Bug Fixes
+
+* open a manual-merge PR to sync version and changelog after release ([#140](https://github.com/chetanbasuray/shorol/issues/140)) ([4d967b5](https://github.com/chetanbasuray/shorol/commit/4d967b5d8fc24cf3e523f894ae0575b11193d811))
+
 ## [2.1.5](https://github.com/chetanbasuray/shorol/compare/v2.1.4...v2.1.5) (2026-06-28)
 
 
