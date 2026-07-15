@@ -37,3 +37,33 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           NPM_CONFIG_PROVENANCE: "true"
           HUSKY: 0
+
+      - name: Open release sync PR
+        if: success()
+        run: |
+          if git diff --quiet -- package.json; then
+            echo "No version bump detected, nothing to sync"
+            exit 0
+          fi
+
+          VERSION=$(node -p "require('./package.json').version")
+          TAG="v$VERSION"
+          BRANCH="release/$TAG"
+
+          git checkout -b "$BRANCH"
+          git add package.json package-lock.json CHANGELOG.md
+          git commit -m "chore(release): sync $TAG [skip ci]"
+          git push origin "$BRANCH"
+
+          gh pr create \
+            --base main \
+            --head "$BRANCH" \
+            --title "chore(release): sync $TAG" \
+            --body "Syncs package.json, package-lock.json, and CHANGELOG.md with the $TAG release already published to npm and GitHub. Requires manual review and merge, nothing here auto-merges." \
+            --label release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GIT_AUTHOR_NAME: github-actions[bot]
+          GIT_AUTHOR_EMAIL: github-actions[bot]@users.noreply.github.com
+          GIT_COMMITTER_NAME: github-actions[bot]
+          GIT_COMMITTER_EMAIL: github-actions[bot]@users.noreply.github.com
