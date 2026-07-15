@@ -17,12 +17,6 @@
       }
     ],
     [
-      "@semantic-release/git",
-      {
-        "assets": ["CHANGELOG.md", "package.json", "package-lock.json"]
-      }
-    ],
-    [
       "@semantic-release/github",
       {
         "labels": false,
