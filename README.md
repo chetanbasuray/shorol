@@ -292,3 +292,4 @@ The release workflow fetches tags to ensure versioning stays in sync with npm.
 ## License
 
 MIT. See `LICENSE`.
+
