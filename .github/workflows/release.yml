@@ -48,7 +48,7 @@ jobs:
 
           git checkout -b "$BRANCH"
           git add package.json package-lock.json CHANGELOG.md
-          git commit -m "chore(release): sync $TAG [skip ci]"
+          git commit -m "chore(release): sync $TAG"
           git push origin "$BRANCH"
 
           gh pr create \
