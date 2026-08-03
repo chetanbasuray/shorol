@@ -5,8 +5,11 @@
 [![npm downloads](https://img.shields.io/npm/dm/shorol.svg)](https://www.npmjs.com/package/shorol)
 [![license](https://img.shields.io/npm/l/shorol.svg)](LICENSE)
 [![release](https://img.shields.io/github/v/release/chetanbasuray/shorol.svg)](https://github.com/chetanbasuray/shorol/releases)
-[![bundle size](https://img.shields.io/bundlephobia/minzip/shorol.svg)](https://bundlephobia.com/package/shorol)
-[![Socket Badge](https://badge.socket.dev/npm/package/shorol/2.1.2)](https://badge.socket.dev/npm/package/shorol/2.1.2)
+[![bundle size](https://img.shields.io/badge/bundle%20size-2.4%20kB%20gzipped-blue)](https://bundlephobia.com/package/shorol)
+[![Socket Badge](https://badge.socket.dev/npm/package/shorol/latest)](https://socket.dev/npm/package/shorol)
+[![dependencies](https://img.shields.io/badge/dependencies-0-brightgreen)](package.json)
+[![tree-shaking](https://img.shields.io/badge/tree--shaking-yes-brightgreen)](https://bundlephobia.com/package/shorol)
+[![side-effects](https://img.shields.io/badge/side--effects-none-brightgreen)](package.json)
 
 Shorol is a fluent, human-readable regex builder for JavaScript and TypeScript. It helps teams generate regex
 that stays readable in code review, centralizes patterns in one place, and exports both pattern

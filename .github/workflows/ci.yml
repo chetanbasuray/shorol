@@ -75,6 +75,21 @@ jobs:
         if: ${{ github.event_name != 'pull_request' }}
         run: npm run commitlint
 
+  cve_check:
+    name: CVE Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+      - run: npm ci
+      - name: Audit production dependencies for known CVEs
+        run: npm audit --omit=dev --audit-level=low || echo "::warning::npm audit found known vulnerabilities in production dependencies. Run 'npm audit --omit=dev' locally for details."
+
   commitlint_pr:
     name: Commitlint (PR)
     if: ${{ github.event_name == 'pull_request' }}
