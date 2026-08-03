@@ -10,6 +10,10 @@
 [![dependencies](https://img.shields.io/badge/dependencies-0-brightgreen)](package.json)
 [![tree-shaking](https://img.shields.io/badge/tree--shaking-yes-brightgreen)](https://bundlephobia.com/package/shorol)
 [![side-effects](https://img.shields.io/badge/side--effects-none-brightgreen)](package.json)
+[![coverage](https://img.shields.io/badge/coverage-100%25-brightgreen)](https://github.com/chetanbasuray/shorol/actions/workflows/ci.yml)
+[![Agent-Ready](https://img.shields.io/badge/%F0%9F%A4%96%20Agent--Ready-llms.txt-blueviolet)](docs/llms.txt)
+[![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen)](CONTRIBUTING.md)
+[![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow)](https://conventionalcommits.org)
 
 Shorol is a fluent, human-readable regex builder for JavaScript and TypeScript. It helps teams generate regex
 that stays readable in code review, centralizes patterns in one place, and exports both pattern
