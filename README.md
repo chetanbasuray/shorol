@@ -289,6 +289,7 @@ export const slugRegex = slugBuilder().toRegExp();
 - [License](LICENSE)
 - [Code of Conduct](CODE_OF_CONDUCT.md)
 - [Feature Plan](FEATURES.md)
+- [Migration Guide (1.x to 2.x)](docs/MIGRATION.md)
 
 ## Release Process
 

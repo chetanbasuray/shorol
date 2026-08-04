@@ -6,6 +6,8 @@ This index lists built-in presets, scope, and example usage.
 
 Presets in shorol are scoped, best-effort patterns. They are intended for readability and common matching flows, not full domain validation.
 
+Two rules apply to every preset below: they check shape, not semantics (a shape-valid date like `2026-13-45` still passes), and they are ASCII only, not locale-aware (accented letters, full-width digits, and other locale variants are rejected). See [PRESETS_GUIDE.md](PRESETS_GUIDE.md#validation-policy) for the full policy and its test matrix.
+
 ## UUID v4 (basic)
 
 - Exports: `uuidPatternBasic`, `uuidRegexBasic`
