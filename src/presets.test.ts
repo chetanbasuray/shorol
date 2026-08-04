@@ -8,7 +8,7 @@ import {
   usernameRegexBasic,
   usernamePatternBasic,
   uuidPatternBasic,
-  uuidRegexBasic
+  uuidRegexBasic,
 } from "./presets";
 
 describe("presets module", () => {
@@ -22,8 +22,12 @@ describe("presets module", () => {
   });
 
   it("validates UUID v4 basic pattern", () => {
-    expect(uuidRegexBasic.test("f47ac10b-58cc-4372-a567-0e02b2c3d479")).toBe(true);
-    expect(uuidRegexBasic.test("F47AC10B-58CC-4372-A567-0E02B2C3D479")).toBe(true);
+    expect(uuidRegexBasic.test("f47ac10b-58cc-4372-a567-0e02b2c3d479")).toBe(
+      true
+    );
+    expect(uuidRegexBasic.test("F47AC10B-58CC-4372-A567-0E02B2C3D479")).toBe(
+      true
+    );
     expect(uuidRegexBasic.test("not-a-uuid")).toBe(false);
   });
 
@@ -45,5 +49,47 @@ describe("presets module", () => {
     expect(usernameRegexBasic.test("user_name_123")).toBe(true);
     expect(usernameRegexBasic.test("ab")).toBe(false);
     expect(usernameRegexBasic.test("user-name")).toBe(false);
+  });
+});
+
+describe("locale-dependent validation policy", () => {
+  describe("shape, not semantics", () => {
+    it("accepts shape-valid but calendar-invalid dates", () => {
+      expect(isoDateRegexBasic.test("2026-13-45")).toBe(true);
+    });
+
+    it("accepts any correctly-shaped v4 UUID regardless of uniqueness", () => {
+      expect(uuidRegexBasic.test("00000000-0000-4000-8000-000000000000")).toBe(
+        true
+      );
+    });
+  });
+
+  describe("ASCII, not locale-aware", () => {
+    it("rejects locale variants in username", () => {
+      expect(usernameRegexBasic.test("josé")).toBe(false);
+      expect(usernameRegexBasic.test("日本語")).toBe(false);
+      expect(usernameRegexBasic.test("مرحبا")).toBe(false);
+      expect(usernameRegexBasic.test("user１２３")).toBe(false);
+      expect(usernameRegexBasic.test("user😀name")).toBe(false);
+    });
+
+    it("rejects Unicode homoglyphs and full-width hex in UUID", () => {
+      expect(uuidRegexBasic.test("f47аc10b-58cc-4372-a567-0e02b2c3d479")).toBe(
+        false
+      );
+      expect(uuidRegexBasic.test("ｆ47ac10b-58cc-4372-a567-0e02b2c3d479")).toBe(
+        false
+      );
+    });
+
+    it("rejects named colors and full-width hex in hex color", () => {
+      expect(hexColorRegex.test("red")).toBe(false);
+      expect(hexColorRegex.test("＃fff")).toBe(false);
+    });
+
+    it("rejects full-width digits in ISO date", () => {
+      expect(isoDateRegexBasic.test("２０２６-05-10")).toBe(false);
+    });
   });
 });
