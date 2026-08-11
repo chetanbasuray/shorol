@@ -33,7 +33,9 @@ describe("shorol regex builder", () => {
   });
 
   it("supports non-capture groups directly", () => {
-    const pattern = regex().nonCapture((b) => b.literal("hi")).toString();
+    const pattern = regex()
+      .nonCapture((b) => b.literal("hi"))
+      .toString();
     expect(pattern).toBe("(?:hi)");
   });
 
@@ -53,12 +55,21 @@ describe("shorol regex builder", () => {
   });
 
   it("supports boundary helpers", () => {
-    const pattern = regex().wordBoundary().literal("cat").nonWordBoundary().toString();
+    const pattern = regex()
+      .wordBoundary()
+      .literal("cat")
+      .nonWordBoundary()
+      .toString();
     expect(pattern).toBe("\\bcat\\B");
   });
 
   it("supports lineBreak() and tab() helpers", () => {
-    const pattern = regex().literal("a").lineBreak().tab().literal("b").toString();
+    const pattern = regex()
+      .literal("a")
+      .lineBreak()
+      .tab()
+      .literal("b")
+      .toString();
     expect(pattern).toBe("a\\n\\tb");
   });
 
@@ -154,7 +165,9 @@ describe("shorol regex builder", () => {
   });
 
   it("rejects empty flags string", () => {
-    expect(() => regex().flags("")).toThrow("requires at least one flag character");
+    expect(() => regex().flags("")).toThrow(
+      "requires at least one flag character"
+    );
   });
 
   it("appends helper flags to stored flags", () => {
@@ -185,21 +198,33 @@ describe("shorol regex builder", () => {
   });
 
   it("blocks pattern mutations after end()", () => {
-    expect(() => regex().literal("a").end().optional()).toThrow("Cannot add tokens");
-    expect(() => regex().literal("a").end().orLiteral("b")).toThrow("Cannot add tokens");
+    expect(() => regex().literal("a").end().optional()).toThrow(
+      "Cannot add tokens"
+    );
+    expect(() => regex().literal("a").end().orLiteral("b")).toThrow(
+      "Cannot add tokens"
+    );
     expect(regex().literal("a").end().global().toRegExp().flags).toBe("g");
     expect(regex().literal("a").end().flags("i").toRegExp().flags).toBe("i");
   });
 
   it("rejects nested quantifiers", () => {
-    expect(() => regex().literal("a").oneOrMore().oneOrMore()).toThrow("already-quantified");
-    expect(() => regex().literal("a").optional().zeroOrMore()).toThrow("already-quantified");
-    expect(() => regex().literal("a").repeat(2).oneOrMore()).toThrow("already-quantified");
+    expect(() => regex().literal("a").oneOrMore().oneOrMore()).toThrow(
+      "already-quantified"
+    );
+    expect(() => regex().literal("a").optional().zeroOrMore()).toThrow(
+      "already-quantified"
+    );
+    expect(() => regex().literal("a").repeat(2).oneOrMore()).toThrow(
+      "already-quantified"
+    );
   });
 
   it("allows literals ending in escaped metacharacters under quantifiers", () => {
     expect(() => regex().literal("https?").oneOrMore()).not.toThrow();
-    expect(regex().literal("https?").oneOrMore().toString()).toBe("(?:https\\?)+");
+    expect(regex().literal("https?").oneOrMore().toString()).toBe(
+      "(?:https\\?)+"
+    );
     expect(() => regex().literal("c++").oneOrMore()).not.toThrow();
     expect(regex().literal("c++").oneOrMore().toString()).toBe("(?:c\\+\\+)+");
   });
@@ -229,7 +254,10 @@ describe("shorol regex builder", () => {
   it("handles quantifier grouping rules", () => {
     const noGroup = regex().literal("a").oneOrMore().toString();
     expect(noGroup).toBe("a+");
-    const group = regex().group((b) => b.literal("ab")).oneOrMore().toString();
+    const group = regex()
+      .group((b) => b.literal("ab"))
+      .oneOrMore()
+      .toString();
     expect(group).toBe("(ab)+");
     const digit = regex().digit().oneOrMore().toString();
     expect(digit).toBe("\\d+");
@@ -279,8 +307,19 @@ describe("shorol regex builder", () => {
   });
 
   it("guards internal token access", () => {
-    const builder = regex() as unknown as { getToken: (index: number) => string };
+    const builder = regex() as unknown as {
+      getToken: (index: number) => string;
+    };
     expect(() => builder.getToken(0)).toThrow("Missing token at index");
+  });
+
+  it("guards internal description access", () => {
+    const builder = regex() as unknown as {
+      getDescription: (index: number) => string;
+    };
+    expect(() => builder.getDescription(0)).toThrow(
+      "Missing description at index"
+    );
   });
 
   it("lazy() makes the previous quantifier non-greedy", () => {
@@ -292,17 +331,23 @@ describe("shorol regex builder", () => {
   });
 
   it("lazy() groups multi-char tokens", () => {
-    expect(regex().literal("ab").oneOrMore().lazy().toString()).toBe("(?:ab)+?");
+    expect(regex().literal("ab").oneOrMore().lazy().toString()).toBe(
+      "(?:ab)+?"
+    );
   });
 
   it("lazy() throws without a quantifier", () => {
-    expect(() => regex().literal("a").lazy()).toThrow("lazy() requires a preceding quantifier");
+    expect(() => regex().literal("a").lazy()).toThrow(
+      "lazy() requires a preceding quantifier"
+    );
     expect(() => regex().start().lazy()).toThrow();
     expect(() => regex().lazy()).toThrow();
   });
 
   it("lazy() throws when applied twice", () => {
-    expect(() => regex().literal("a").oneOrMore().lazy().lazy()).toThrow("lazy() can only be applied once");
+    expect(() => regex().literal("a").oneOrMore().lazy().lazy()).toThrow(
+      "lazy() can only be applied once"
+    );
   });
 
   it("backreference() by number adds \\n", () => {
@@ -321,9 +366,15 @@ describe("shorol regex builder", () => {
 
   it("unicodeProperty() adds \\p{Name}", () => {
     expect(regex().unicodeProperty("Letter").toString()).toBe("\\p{Letter}");
-    expect(regex().unicodeProperty("Script", "Greek").toString()).toBe("\\p{Script=Greek}");
-    expect(() => regex().unicodeProperty("")).toThrow("non-empty property name");
-    expect(() => regex().unicodeProperty("Letter", "")).toThrow("non-empty value");
+    expect(regex().unicodeProperty("Script", "Greek").toString()).toBe(
+      "\\p{Script=Greek}"
+    );
+    expect(() => regex().unicodeProperty("")).toThrow(
+      "non-empty property name"
+    );
+    expect(() => regex().unicodeProperty("Letter", "")).toThrow(
+      "non-empty value"
+    );
   });
 
   it("raw() injects without escaping", () => {
@@ -338,20 +389,152 @@ describe("shorol regex builder", () => {
 
   it("oneOf() matches any alternative", () => {
     expect(
-      regex().oneOf(
-        (b) => b.literal("cat"),
-        (b) => b.literal("dog"),
-        (b) => b.literal("bird")
-      ).toString()
+      regex()
+        .oneOf(
+          (b) => b.literal("cat"),
+          (b) => b.literal("dog"),
+          (b) => b.literal("bird")
+        )
+        .toString()
     ).toBe("(?:cat|dog|bird)");
   });
 
   it("oneOfLiteral() convenience with strings", () => {
-    expect(regex().oneOfLiteral("yes", "no", "maybe").toString()).toBe("(?:yes|no|maybe)");
-    expect(() => regex().oneOfLiteral("only")).toThrow("requires at least two alternatives");
+    expect(regex().oneOfLiteral("yes", "no", "maybe").toString()).toBe(
+      "(?:yes|no|maybe)"
+    );
+    expect(() => regex().oneOfLiteral("only")).toThrow(
+      "requires at least two alternatives"
+    );
   });
 
   it("oneOf() throws with less than 2 alternatives", () => {
-    expect(() => regex().oneOf((b) => b.literal("x"))).toThrow("requires at least two alternatives");
+    expect(() => regex().oneOf((b) => b.literal("x"))).toThrow(
+      "requires at least two alternatives"
+    );
+  });
+});
+
+describe("explain()", () => {
+  it("returns a placeholder for an empty pattern", () => {
+    expect(regex().explain()).toBe("An empty pattern.");
+  });
+
+  it("describes a simple chain in plain English", () => {
+    expect(regex().start().digit().oneOrMore().end().explain()).toBe(
+      "Start of string, then one or more of a digit, then end of string."
+    );
+  });
+
+  it("describes literals, character classes, and ranges", () => {
+    expect(regex().literal("cat").explain()).toBe('The literal text "cat".');
+    expect(regex().anyOf("abc").explain()).toBe(
+      'Any of these characters: "abc".'
+    );
+    expect(regex().noneOf("xyz").explain()).toBe(
+      'None of these characters: "xyz".'
+    );
+    expect(regex().range("a", "z").explain()).toBe(
+      'A character from "a" to "z".'
+    );
+  });
+
+  it("describes named groups, groups, and non-capturing groups", () => {
+    expect(
+      regex()
+        .namedGroup("val", (b) => b.digit())
+        .explain()
+    ).toBe('A named group "val" containing (a digit).');
+    expect(
+      regex()
+        .group((b) => b.digit())
+        .explain()
+    ).toBe("A group containing (a digit).");
+    expect(
+      regex()
+        .nonCapture((b) => b.digit())
+        .explain()
+    ).toBe("The sequence (a digit).");
+  });
+
+  it("describes lookarounds", () => {
+    expect(
+      regex()
+        .lookahead((b) => b.digit())
+        .explain()
+    ).toBe("Followed by (a digit).");
+    expect(
+      regex()
+        .negativeLookahead((b) => b.digit())
+        .explain()
+    ).toBe("Not followed by (a digit).");
+    expect(
+      regex()
+        .lookbehind((b) => b.digit())
+        .explain()
+    ).toBe("Preceded by (a digit).");
+    expect(
+      regex()
+        .negativeLookbehind((b) => b.digit())
+        .explain()
+    ).toBe("Not preceded by (a digit).");
+  });
+
+  it("describes alternation", () => {
+    expect(regex().literal("cat").orLiteral("dog").explain()).toBe(
+      '(the literal text "cat" or the literal text "dog").'
+    );
+  });
+
+  it("describes quantifiers", () => {
+    expect(regex().digit().optional().explain()).toBe("Optionally, a digit.");
+    expect(regex().digit().zeroOrMore().explain()).toBe(
+      "Zero or more of a digit."
+    );
+    expect(regex().digit().oneOrMore().explain()).toBe(
+      "One or more of a digit."
+    );
+    expect(regex().digit().exactly(1).explain()).toBe(
+      "A digit, repeated 1 time."
+    );
+    expect(regex().digit().exactly(3).explain()).toBe(
+      "A digit, repeated 3 times."
+    );
+    expect(regex().digit().between(2, 4).explain()).toBe(
+      "A digit, repeated between 2 and 4 times."
+    );
+  });
+
+  it("describes lazy quantifiers", () => {
+    expect(regex().digit().oneOrMore().lazy().explain()).toBe(
+      "One or more of a digit (matched lazily)."
+    );
+  });
+
+  it("describes oneOf()", () => {
+    expect(
+      regex()
+        .oneOf(
+          (b) => b.literal("cat"),
+          (b) => b.literal("dog")
+        )
+        .explain()
+    ).toBe('One of: the literal text "cat", the literal text "dog".');
+  });
+
+  it("describes raw(), unicodeProperty(), and backreference()", () => {
+    expect(regex().raw("\\d{3}").explain()).toBe('The raw pattern "\\d{3}".');
+    expect(regex().unicodeProperty("Letter").explain()).toBe(
+      'A character with the Unicode property "Letter".'
+    );
+    expect(regex().unicodeProperty("Script", "Greek").explain()).toBe(
+      'A character with the Unicode property "Script=Greek".'
+    );
+    expect(regex().backreference(1).explain()).toBe(
+      "A backreference to group 1."
+    );
+    expect(regex().backreference("val").explain()).toBe(
+      'A backreference to the named group "val".'
+    );
   });
 });
