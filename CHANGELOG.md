@@ -1,3 +1,15 @@
+# [2.2.0](https://github.com/chetanbasuray/shorol/compare/v2.1.8...v2.2.0) (2026-08-11)
+
+
+### Bug Fixes
+
+* drop skip ci from release sync PR commits ([#144](https://github.com/chetanbasuray/shorol/issues/144)) ([57023de](https://github.com/chetanbasuray/shorol/commit/57023deff8b389c46e45df88d5994b23ba1e65b0)), closes [#141](https://github.com/chetanbasuray/shorol/issues/141) [#143](https://github.com/chetanbasuray/shorol/issues/143)
+
+
+### Features
+
+* add explain() for human-readable builder chain descriptions ([#165](https://github.com/chetanbasuray/shorol/issues/165)) ([d7864b1](https://github.com/chetanbasuray/shorol/commit/d7864b178da748c6a4e5f894690581e319562aea))
+
 ## [2.1.8](https://github.com/chetanbasuray/shorol/compare/v2.1.7...v2.1.8) (2026-07-15)
 
 
