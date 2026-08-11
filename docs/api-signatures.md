@@ -53,6 +53,7 @@ This file is used by `doc-sync-check` to detect documentation drift for exported
 `Builder.toRegExp(flags?: string): RegExp`
 `Builder.matches(input: string, flags?: string): boolean`
 `Builder.clone(): Builder`
+`Builder.explain(): string`
 
 ## Builders and Registries
 

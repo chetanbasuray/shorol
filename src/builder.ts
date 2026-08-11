@@ -55,12 +55,17 @@ function needsQuantifierGrouping(token: string): boolean {
   return true;
 }
 
+function joinExplanations(parts: string[]): string {
+  return parts.join(", then ");
+}
+
 /**
  * Fluent, chainable regex builder.
  * Each method appends a token and returns the same instance for chaining.
  */
 export class Builder {
   private tokens: string[] = [];
+  private descriptions: string[] = [];
   private started = false;
   private ended = false;
   private lastTokenLazy = false;
@@ -73,9 +78,10 @@ export class Builder {
     }
   }
 
-  private addToken(token: string): this {
+  private addToken(token: string, description: string): this {
     this.ensureCanAdd();
     this.tokens.push(token);
+    this.descriptions.push(description);
     this.lastTokenQuantified = false;
     this.lastTokenLazy = false;
     return this;
@@ -96,7 +102,18 @@ export class Builder {
     return token;
   }
 
-  private applyQuantifier(suffix: string): this {
+  private getDescription(index: number): string {
+    const description = this.descriptions[index];
+    if (description === undefined) {
+      throw new Error("Missing description at index");
+    }
+    return description;
+  }
+
+  private applyQuantifier(
+    suffix: string,
+    describe: (inner: string) => string
+  ): this {
     this.ensureCanAdd();
     const index = this.requireLast();
     const token = this.getToken(index);
@@ -107,6 +124,7 @@ export class Builder {
     }
     const grouped = needsQuantifierGrouping(token) ? `(?:${token})` : token;
     this.tokens[index] = `${grouped}${suffix}`;
+    this.descriptions[index] = describe(this.getDescription(index));
     this.lastTokenQuantified = true;
     this.lastTokenLazy = false;
     return this;
@@ -118,12 +136,12 @@ export class Builder {
       throw new Error("start() must be the first token");
     }
     this.started = true;
-    return this.addToken("^");
+    return this.addToken("^", "start of string");
   }
 
   /** Add an end-of-line anchor (`$`). */
   end(): this {
-    const result = this.addToken("$");
+    const result = this.addToken("$", "end of string");
     this.ended = true;
     return result;
   }
@@ -131,7 +149,7 @@ export class Builder {
   /** Add a literal string with regex metacharacters escaped. */
   literal(text: string): this {
     const escaped = escapeLiteral(text);
-    return this.addToken(escaped);
+    return this.addToken(escaped, `the literal text "${text}"`);
   }
 
   /**
@@ -144,7 +162,7 @@ export class Builder {
       throw new Error("anyOf(chars) requires at least one character");
     }
     const escaped = escapeCharClass(raw);
-    return this.addToken(`[${escaped}]`);
+    return this.addToken(`[${escaped}]`, `any of these characters: "${raw}"`);
   }
 
   /**
@@ -157,7 +175,7 @@ export class Builder {
       throw new Error("noneOf(chars) requires at least one character");
     }
     const escaped = escapeCharClass(raw);
-    return this.addToken(`[^${escaped}]`);
+    return this.addToken(`[^${escaped}]`, `none of these characters: "${raw}"`);
   }
 
   /**
@@ -166,104 +184,130 @@ export class Builder {
    */
   range(from: string, to: string): this {
     if ([...from].length !== 1 || [...to].length !== 1) {
-      throw new Error("range(from, to) requires each bound to be exactly one code point");
+      throw new Error(
+        "range(from, to) requires each bound to be exactly one code point"
+      );
     }
     const escapedFrom = escapeCharClass(from);
     const escapedTo = escapeCharClass(to);
-    return this.addToken(`[${escapedFrom}-${escapedTo}]`);
+    return this.addToken(
+      `[${escapedFrom}-${escapedTo}]`,
+      `a character from "${from}" to "${to}"`
+    );
   }
 
   /** Add a dot wildcard (`.`). */
   any(): this {
-    return this.addToken(".");
+    return this.addToken(".", "any character");
   }
 
   /** Add a digit matcher (`\\d`). */
   digit(): this {
-    return this.addToken("\\d");
+    return this.addToken("\\d", "a digit");
   }
 
   /** Add a word character matcher (`\\w`). */
   word(): this {
-    return this.addToken("\\w");
+    return this.addToken("\\w", "a word character");
   }
 
   /** Add a word boundary matcher (`\\b`). */
   wordBoundary(): this {
-    return this.addToken("\\b");
+    return this.addToken("\\b", "a word boundary");
   }
 
   /** Add a non-word-boundary matcher (`\\B`). */
   nonWordBoundary(): this {
-    return this.addToken("\\B");
+    return this.addToken("\\B", "not a word boundary");
   }
 
   /** Add a letter matcher (`[a-zA-Z]`). */
   letter(): this {
-    return this.addToken("[a-zA-Z]");
+    return this.addToken("[a-zA-Z]", "a letter");
   }
 
   /** Add a whitespace matcher (`\\s`). */
   whitespace(): this {
-    return this.addToken("\\s");
+    return this.addToken("\\s", "whitespace");
   }
 
   /** Add a literal space character. */
   space(): this {
-    return this.addToken(" ");
+    return this.addToken(" ", "a space");
   }
 
   /** Add a line-break matcher (`\\n`). */
   lineBreak(): this {
-    return this.addToken("\\n");
+    return this.addToken("\\n", "a line break");
   }
 
   /** Add a tab matcher (`\\t`). */
   tab(): this {
-    return this.addToken("\\t");
+    return this.addToken("\\t", "a tab");
   }
 
   /** Add a capturing group built by the provided callback. */
   group(fn: BuildFn): this {
     const child = fn(new Builder());
-    return this.addToken(`(${child.toString()})`);
+    return this.addToken(
+      `(${child.toString()})`,
+      `a group containing (${joinExplanations(child.descriptions)})`
+    );
   }
 
   /** Add a named capturing group `(?<name>...)`. */
   namedGroup(name: string, fn: BuildFn): this {
     assertValidGroupName(name);
     const child = fn(new Builder());
-    return this.addToken(`(?<${name}>${child.toString()})`);
+    return this.addToken(
+      `(?<${name}>${child.toString()})`,
+      `a named group "${name}" containing (${joinExplanations(child.descriptions)})`
+    );
   }
 
   /** Add a non-capturing group `(?:...)`. */
   nonCapture(fn: BuildFn): this {
     const child = fn(new Builder());
-    return this.addToken(`(?:${child.toString()})`);
+    return this.addToken(
+      `(?:${child.toString()})`,
+      `the sequence (${joinExplanations(child.descriptions)})`
+    );
   }
 
   /** Add a positive lookahead `(?=...)`. */
   lookahead(fn: BuildFn): this {
     const child = fn(new Builder());
-    return this.addToken(`(?=${child.toString()})`);
+    return this.addToken(
+      `(?=${child.toString()})`,
+      `followed by (${joinExplanations(child.descriptions)})`
+    );
   }
 
   /** Add a negative lookahead `(?!...)`. */
   negativeLookahead(fn: BuildFn): this {
     const child = fn(new Builder());
-    return this.addToken(`(?!${child.toString()})`);
+    return this.addToken(
+      `(?!${child.toString()})`,
+      `not followed by (${joinExplanations(child.descriptions)})`
+    );
   }
 
   /** Add a positive lookbehind `(?<=...)`. */
   lookbehind(fn: BuildFn): this {
     const child = fn(new Builder());
-    return this.addToken(`(?<=${child.toString()})`);
+    return this.addToken(
+      `(?<=${child.toString()})`,
+      `preceded by (${joinExplanations(child.descriptions)})`
+    );
   }
 
   /** Add a negative lookbehind `(?<!...)`. */
   negativeLookbehind(fn: BuildFn): this {
     const child = fn(new Builder());
-    return this.addToken(`(?<!${child.toString()})`);
+    return this.addToken(
+      `(?<!${child.toString()})`,
+      `not preceded by (${joinExplanations(child.descriptions)})`
+    );
   }
 
   /**
@@ -281,8 +325,11 @@ export class Builder {
     this.ensureCanAdd();
     const index = this.requireLast();
     const left = this.getToken(index);
-    const right = fn(new Builder()).toString();
-    this.tokens[index] = `(?:${left}|${right})`;
+    const leftDescription = this.getDescription(index);
+    const right = fn(new Builder());
+    this.tokens[index] = `(?:${left}|${right.toString()})`;
+    this.descriptions[index] =
+      `(${leftDescription} or ${joinExplanations(right.descriptions)})`;
     this.lastTokenQuantified = false;
     return this;
   }
@@ -294,30 +341,40 @@ export class Builder {
 
   /** Make the previous token optional (`?`). */
   optional(): this {
-    return this.applyQuantifier("?");
+    return this.applyQuantifier("?", (inner) => `optionally, ${inner}`);
   }
 
   /** Repeat the previous token zero or more times (`*`). */
   zeroOrMore(): this {
-    return this.applyQuantifier("*");
+    return this.applyQuantifier("*", (inner) => `zero or more of ${inner}`);
   }
 
   /** Repeat the previous token one or more times (`+`). */
   oneOrMore(): this {
-    return this.applyQuantifier("+");
+    return this.applyQuantifier("+", (inner) => `one or more of ${inner}`);
   }
 
   /** Repeat the previous token with an explicit range (`{min}` or `{min,max}`). */
   repeat(min: number, max?: number): this {
     if (min < 0 || !Number.isInteger(min)) {
-      throw new Error("repeat(min, max) requires min to be a non-negative integer");
+      throw new Error(
+        "repeat(min, max) requires min to be a non-negative integer"
+      );
     }
     if (max !== undefined && (max < min || !Number.isInteger(max))) {
-      throw new Error("repeat(min, max) requires max to be a non-negative integer >= min");
+      throw new Error(
+        "repeat(min, max) requires max to be a non-negative integer >= min"
+      );
     }
 
     const range = max === undefined ? `{${min}}` : `{${min},${max}}`;
-    return this.applyQuantifier(range);
+    const describe =
+      max === undefined
+        ? (inner: string) =>
+            `${inner}, repeated ${min} time${min === 1 ? "" : "s"}`
+        : (inner: string) =>
+            `${inner}, repeated between ${min} and ${max} times`;
+    return this.applyQuantifier(range, describe);
   }
 
   /** Alias for `repeat(count)`. Repeats the previous token exactly `count` times (`{n}`). */
@@ -330,8 +387,12 @@ export class Builder {
     if (alternatives.length < 2) {
       throw new Error("oneOf() requires at least two alternatives");
     }
-    const parts = alternatives.map((fn) => fn(new Builder()).toString());
-    return this.addToken(`(?:${parts.join("|")})`);
+    const built = alternatives.map((fn) => fn(new Builder()));
+    const pattern = built.map((b) => b.toString()).join("|");
+    const description = built
+      .map((b) => joinExplanations(b.descriptions))
+      .join(", ");
+    return this.addToken(`(?:${pattern})`, `one of: ${description}`);
   }
 
   /** Convenience for `oneOf` with literal strings. */
@@ -344,21 +405,31 @@ export class Builder {
     if (str.length === 0) {
       throw new Error("raw(str) requires a non-empty string");
     }
-    return this.addToken(str);
+    return this.addToken(str, `the raw pattern "${str}"`);
   }
 
   /** Add a Unicode property escape (`\\p{Name}` or `\\p{Name=Value}`). Requires the `u` flag at runtime. */
   unicodeProperty(name: string, value?: string): this {
     if (name.length === 0) {
-      throw new Error("unicodeProperty(name) requires a non-empty property name");
+      throw new Error(
+        "unicodeProperty(name) requires a non-empty property name"
+      );
     }
     if (value !== undefined) {
       if (value.length === 0) {
-        throw new Error("unicodeProperty(name, value) requires a non-empty value");
+        throw new Error(
+          "unicodeProperty(name, value) requires a non-empty value"
+        );
       }
-      return this.addToken(`\\p{${name}=${value}}`);
+      return this.addToken(
+        `\\p{${name}=${value}}`,
+        `a character with the Unicode property "${name}=${value}"`
+      );
     }
-    return this.addToken(`\\p{${name}}`);
+    return this.addToken(
+      `\\p{${name}}`,
+      `a character with the Unicode property "${name}"`
+    );
   }
 
   /** Add a backreference by group number (`\\n`) or group name (`\\k<name>`). */
@@ -367,12 +438,15 @@ export class Builder {
       if (!Number.isInteger(ref) || ref < 1) {
         throw new Error("backreference(n) requires a positive integer");
       }
-      return this.addToken(`\\${ref}`);
+      return this.addToken(`\\${ref}`, `a backreference to group ${ref}`);
     }
     if (ref.length === 0) {
       throw new Error("backreference(name) requires a non-empty name");
     }
-    return this.addToken(`\\k<${ref}>`);
+    return this.addToken(
+      `\\k<${ref}>`,
+      `a backreference to the named group "${ref}"`
+    );
   }
 
   /** Make the previous quantifier non-greedy (`??`, `*?`, `+?`, `{n}?`, `{n,m}?`). */
@@ -389,6 +463,7 @@ export class Builder {
       );
     }
     this.tokens[index] = `${token}?`;
+    this.descriptions[index] = `${this.getDescription(index)} (matched lazily)`;
     this.lastTokenLazy = true;
     return this;
   }
@@ -467,6 +542,7 @@ export class Builder {
   clone(): Builder {
     const next = new Builder();
     next.tokens = [...this.tokens];
+    next.descriptions = [...this.descriptions];
     next.started = this.started;
     next.ended = this.ended;
     next.lastTokenLazy = this.lastTokenLazy;
@@ -484,6 +560,15 @@ export class Builder {
   /** Test the built `RegExp` against input. */
   matches(input: string, flags?: string): boolean {
     return this.toRegExp(flags).test(input);
+  }
+
+  /** Return a human-readable, plain-English explanation of the current chain. */
+  explain(): string {
+    if (this.descriptions.length === 0) {
+      return "An empty pattern.";
+    }
+    const joined = joinExplanations(this.descriptions);
+    return `${joined.charAt(0).toUpperCase()}${joined.slice(1)}.`;
   }
 }
 

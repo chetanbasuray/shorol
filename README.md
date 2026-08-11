@@ -74,6 +74,24 @@ const phone = regex()
 phone.test("415-5555"); // true
 ```
 
+### Explain a chain in plain English
+
+Every builder chain can explain itself, useful in code review or for an agent to double-check its own output against intent.
+
+```ts
+const phone = regex()
+  .start()
+  .namedGroup("area", (b) => b.digit().repeat(3))
+  .literal("-")
+  .namedGroup("number", (b) => b.digit().repeat(4))
+  .end();
+
+phone.explain();
+// => 'Start of string, then a named group "area" containing (a digit, repeated 3 times),
+//     then the literal text "-", then a named group "number" containing
+//     (a digit, repeated 4 times), then end of string.'
+```
+
 ## Usage
 
 ### Preset test template
@@ -245,6 +263,7 @@ const identifier = new RegExp(identifierPattern);
 - `flags(flags: string)` / `toString()` / `toRegExp(flags?)`
 - `matches(input: string, flags?: string)`
 - `clone()`
+- `explain()`
 
 ## AI & Contributor Guidance
 
