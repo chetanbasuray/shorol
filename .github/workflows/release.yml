@@ -1,7 +1,14 @@
 name: Release
 
 on:
+  push:
+    branches: ["main"]
   workflow_dispatch: {}
+
+# Serialize releases so two merges in quick succession cannot publish concurrently.
+concurrency:
+  group: release
+  cancel-in-progress: false
 
 jobs:
   release:
@@ -25,6 +32,10 @@ jobs:
           registry-url: "https://registry.npmjs.org"
       - run: npm install -g npm@11.5.1
       - run: npm ci
+      # Self-gate the automated release: no human reviews the merge, so a failing
+      # test or typecheck must stop the publish.
+      - run: npm run typecheck
+      - run: npm test
       - run: npm run build
       - run: npm run release
         env:
