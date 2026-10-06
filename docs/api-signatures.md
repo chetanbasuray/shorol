@@ -4,7 +4,7 @@ This file is used by `doc-sync-check` to detect documentation drift for exported
 
 ## Builder
 
-`class Builder`
+`class Builder<Groups extends string = never>`
 `Builder.start(): this`
 `Builder.end(): this`
 `Builder.lazy(): this`
@@ -24,18 +24,18 @@ This file is used by `doc-sync-check` to detect documentation drift for exported
 `Builder.space(): this`
 `Builder.lineBreak(): this`
 `Builder.tab(): this`
-`Builder.group(fn: BuildFn): this`
+`Builder.group(fn: (b: Builder) => Builder<G>): Builder<Groups | G>`
 `Builder.hasIndices(): this`
-`Builder.namedGroup(name: string, fn: BuildFn): this`
-`Builder.nonCapture(fn: BuildFn): this`
-`Builder.lookahead(fn: BuildFn): this`
-`Builder.negativeLookahead(fn: BuildFn): this`
-`Builder.lookbehind(fn: BuildFn): this`
-`Builder.negativeLookbehind(fn: BuildFn): this`
-`Builder.oneOf(...alternatives: BuildFn[]): this`
-`Builder.oneOfLiteral(...alternatives: string[]): this`
-`Builder.or(fn: BuildFn): this`
-`Builder.orLiteral(text: string): this`
+`Builder.namedGroup(name: Name, fn: (b: Builder) => Builder<G>): Builder<Groups | Name | G>`
+`Builder.nonCapture(fn: (b: Builder) => Builder<G>): Builder<Groups | G>`
+`Builder.lookahead(fn: (b: Builder) => Builder<G>): Builder<Groups | G>`
+`Builder.negativeLookahead(fn: (b: Builder) => Builder<G>): Builder<Groups | G>`
+`Builder.lookbehind(fn: (b: Builder) => Builder<G>): Builder<Groups | G>`
+`Builder.negativeLookbehind(fn: (b: Builder) => Builder<G>): Builder<Groups | G>`
+`Builder.oneOf(...alternatives: Array<(b: Builder) => Builder<G>>): Builder<Groups | G>`
+`Builder.oneOfLiteral(...alternatives: string[]): Builder<Groups | G>`
+`Builder.or(fn: (b: Builder) => Builder<G>): Builder<Groups | G>`
+`Builder.orLiteral(text: string): Builder<Groups | G>`
 `Builder.optional(): this`
 `Builder.zeroOrMore(): this`
 `Builder.oneOrMore(): this`
@@ -52,12 +52,23 @@ This file is used by `doc-sync-check` to detect documentation drift for exported
 `Builder.toString(): string`
 `Builder.toRegExp(flags?: string): RegExp`
 `Builder.matches(input: string, flags?: string): boolean`
-`Builder.clone(): Builder`
+`Builder.exec(input: string, flags?: string): TypedExec<Groups> | null`
+`Builder.match(input: string, flags?: string): TypedMatch<Groups> | null`
+`Builder.matchAll(input: string, flags?: string): TypedMatch<Groups>[]`
+`Builder.replace(input: string, replacement: ReplaceValue, flags?: string): string`
+`Builder.replaceAll(input: string, replacement: ReplaceValue, flags?: string): string`
+`Builder.split(input: string, flags?: string): string[]`
+`Builder.clone(): Builder<Groups>`
 `Builder.explain(): string`
+
+## Types
+
+`type TypedMatch<G extends string> = Omit<RegExpMatchArray, "groups"> & { groups: GroupRecord<G> }`
+`type TypedExec<G extends string> = Omit<RegExpExecArray, "groups"> & { groups: GroupRecord<G> }`
 
 ## Builders and Registries
 
-`regex(): Builder`
+`regex(): Builder<never>`
 `escapeLiteral(input: string): string`
 `const slugBuilder`
 `const slugPattern`

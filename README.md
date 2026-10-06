@@ -195,6 +195,31 @@ const uuidV4 = regex()
   .toRegExp("i");
 ```
 
+## Matching and extracting (typed)
+
+Named groups flow into the type system, and the builder can run the pattern for you
+(`match`, `matchAll`, `exec`, `replace`, `replaceAll`, `split`) so you never drop back
+to a raw `RegExp`:
+
+```ts
+const date = regex()
+  .namedGroup("year", (b) => b.digit().repeat(4))
+  .literal("-")
+  .namedGroup("month", (b) => b.digit().repeat(2));
+
+const m = date.match("2026-10");
+m?.groups.year; // string — typed as { year: string; month: string }, autocompleted
+// m?.groups.day  // ❌ compile error: "day" is not a group
+
+regex().digit().oneOrMore().replaceAll("a12b34", "#"); // "a#b#" (replaceAll adds the global flag)
+```
+
+`unicodeProperty()` now enables the `u` flag automatically, so `\p{...}` matches as intended:
+
+```ts
+regex().unicodeProperty("L").oneOrMore().matches("héllo"); // true
+```
+
 ## Example Gallery (Recipes)
 
 ### Username (3-30, alnum + underscore)

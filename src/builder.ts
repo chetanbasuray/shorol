@@ -1,8 +1,12 @@
-/** Callback used to build nested groups and lookarounds. */
-type BuildFn = (builder: Builder) => Builder;
-
 const META_CHARS = /[.*+?^${}()|[\]\\]/g;
 const VALID_FLAGS = "dgimsuy";
+
+type GroupRecord<G extends string> = [G] extends [never] ? undefined : { [K in G]: string };
+export type TypedMatch<G extends string> = Omit<RegExpMatchArray, "groups"> & { groups: GroupRecord<G> };
+export type TypedExec<G extends string> = Omit<RegExpExecArray, "groups"> & { groups: GroupRecord<G> };
+
+/** String or replacer-function accepted by `String.prototype.replace`. */
+type ReplaceValue = string | Parameters<string["replace"]>[1];
 
 /**
  * Escape regex metacharacters in a literal string.
@@ -63,7 +67,7 @@ function joinExplanations(parts: string[]): string {
  * Fluent, chainable regex builder.
  * Each method appends a token and returns the same instance for chaining.
  */
-export class Builder {
+export class Builder<Groups extends string = never> {
   private tokens: string[] = [];
   private descriptions: string[] = [];
   private started = false;
@@ -247,67 +251,77 @@ export class Builder {
   }
 
   /** Add a capturing group built by the provided callback. */
-  group(fn: BuildFn): this {
+  group<G extends string = never>(fn: (b: Builder) => Builder<G>): Builder<Groups | G> {
     const child = fn(new Builder());
-    return this.addToken(
+    this.addToken(
       `(${child.toString()})`,
       `a group containing (${joinExplanations(child.descriptions)})`
     );
+    return this as unknown as Builder<Groups | G>;
   }
 
   /** Add a named capturing group `(?<name>...)`. */
-  namedGroup(name: string, fn: BuildFn): this {
+  namedGroup<Name extends string, G extends string = never>(
+    name: Name,
+    fn: (b: Builder) => Builder<G>
+  ): Builder<Groups | Name | G> {
     assertValidGroupName(name);
     const child = fn(new Builder());
-    return this.addToken(
+    this.addToken(
       `(?<${name}>${child.toString()})`,
       `a named group "${name}" containing (${joinExplanations(child.descriptions)})`
     );
+    return this as unknown as Builder<Groups | Name | G>;
   }
 
   /** Add a non-capturing group `(?:...)`. */
-  nonCapture(fn: BuildFn): this {
+  nonCapture<G extends string = never>(fn: (b: Builder) => Builder<G>): Builder<Groups | G> {
     const child = fn(new Builder());
-    return this.addToken(
+    this.addToken(
       `(?:${child.toString()})`,
       `the sequence (${joinExplanations(child.descriptions)})`
     );
+    return this as unknown as Builder<Groups | G>;
   }
 
   /** Add a positive lookahead `(?=...)`. */
-  lookahead(fn: BuildFn): this {
+  lookahead<G extends string = never>(fn: (b: Builder) => Builder<G>): Builder<Groups | G> {
     const child = fn(new Builder());
-    return this.addToken(
+    this.addToken(
       `(?=${child.toString()})`,
       `followed by (${joinExplanations(child.descriptions)})`
     );
+    return this as unknown as Builder<Groups | G>;
   }
 
   /** Add a negative lookahead `(?!...)`. */
-  negativeLookahead(fn: BuildFn): this {
+  negativeLookahead<G extends string = never>(fn: (b: Builder) => Builder<G>): Builder<Groups | G> {
     const child = fn(new Builder());
-    return this.addToken(
+    this.addToken(
       `(?!${child.toString()})`,
       `not followed by (${joinExplanations(child.descriptions)})`
     );
+    return this as unknown as Builder<Groups | G>;
   }
 
   /** Add a positive lookbehind `(?<=...)`. */
-  lookbehind(fn: BuildFn): this {
+  lookbehind<G extends string = never>(fn: (b: Builder) => Builder<G>): Builder<Groups | G> {
     const child = fn(new Builder());
-    return this.addToken(
+    this.addToken(
       `(?<=${child.toString()})`,
       `preceded by (${joinExplanations(child.descriptions)})`
     );
+    return this as unknown as Builder<Groups | G>;
   }
 
   /** Add a negative lookbehind `(?<!...)`. */
-  negativeLookbehind(fn: BuildFn): this {
+  negativeLookbehind<G extends string = never>(fn: (b: Builder) => Builder<G>): Builder<Groups | G> {
     const child = fn(new Builder());
-    return this.addToken(
+    this.addToken(
       `(?<!${child.toString()})`,
       `not preceded by (${joinExplanations(child.descriptions)})`
     );
+    return this as unknown as Builder<Groups | G>;
   }
 
   /**
@@ -321,7 +335,7 @@ export class Builder {
    * ```
    */
   // TODO: whole-expression alternation should be considered for a future major version.
-  or(fn: BuildFn): this {
+  or<G extends string = never>(fn: (b: Builder) => Builder<G>): Builder<Groups | G> {
     this.ensureCanAdd();
     const index = this.requireLast();
     const left = this.getToken(index);
@@ -331,12 +345,12 @@ export class Builder {
     this.descriptions[index] =
       `(${leftDescription} or ${joinExplanations(right.descriptions)})`;
     this.lastTokenQuantified = false;
-    return this;
+    return this as unknown as Builder<Groups | G>;
   }
 
   /** Convenience for `or((b) => b.literal(text))`. */
-  orLiteral(text: string): this {
-    return this.or((builder) => builder.literal(text));
+  orLiteral<G extends string = never>(text: string): Builder<Groups | G> {
+    return this.or((builder) => builder.literal(text)) as unknown as Builder<Groups | G>;
   }
 
   /** Make the previous token optional (`?`). */
@@ -383,7 +397,7 @@ export class Builder {
   }
 
   /** Match any of the given alternatives, e.g. `oneOf(cat, dog)` => `(?:cat|dog)`. */
-  oneOf(...alternatives: BuildFn[]): this {
+  oneOf<G extends string = never>(...alternatives: Array<(b: Builder) => Builder<G>>): Builder<Groups | G> {
     if (alternatives.length < 2) {
       throw new Error("oneOf() requires at least two alternatives");
     }
@@ -392,12 +406,13 @@ export class Builder {
     const description = built
       .map((b) => joinExplanations(b.descriptions))
       .join(", ");
-    return this.addToken(`(?:${pattern})`, `one of: ${description}`);
+    this.addToken(`(?:${pattern})`, `one of: ${description}`);
+    return this as unknown as Builder<Groups | G>;
   }
 
   /** Convenience for `oneOf` with literal strings. */
-  oneOfLiteral(...alternatives: string[]): this {
-    return this.oneOf(...alternatives.map((s) => (b: Builder) => b.literal(s)));
+  oneOfLiteral<G extends string = never>(...alternatives: string[]): Builder<Groups | G> {
+    return this.oneOf(...alternatives.map((s) => (b: Builder) => b.literal(s))) as unknown as Builder<Groups | G>;
   }
 
   /** Inject a raw regex string without escaping. Use sparingly for edge cases the builder does not cover. */
@@ -421,15 +436,19 @@ export class Builder {
           "unicodeProperty(name, value) requires a non-empty value"
         );
       }
-      return this.addToken(
+      this.addToken(
         `\\p{${name}=${value}}`,
         `a character with the Unicode property "${name}=${value}"`
       );
+      this.appendFlag("u");
+      return this;
     }
-    return this.addToken(
+    this.addToken(
       `\\p{${name}}`,
       `a character with the Unicode property "${name}"`
     );
+    this.appendFlag("u");
+    return this;
   }
 
   /** Add a backreference by group number (`\\n`) or group name (`\\k<name>`). */
@@ -539,7 +558,7 @@ export class Builder {
   }
 
   /** Clone the current builder for safe branching. */
-  clone(): Builder {
+  clone(): Builder<Groups> {
     const next = new Builder();
     next.tokens = [...this.tokens];
     next.descriptions = [...this.descriptions];
@@ -548,7 +567,7 @@ export class Builder {
     next.lastTokenLazy = this.lastTokenLazy;
     next.storedFlags = this.storedFlags;
     next.lastTokenQuantified = this.lastTokenQuantified;
-    return next;
+    return next as unknown as Builder<Groups>;
   }
 
   /** Build a native `RegExp`, using passed flags or stored flags. */
@@ -570,9 +589,65 @@ export class Builder {
     const joined = joinExplanations(this.descriptions);
     return `${joined.charAt(0).toUpperCase()}${joined.slice(1)}.`;
   }
+
+  /**
+   * Execute the regex against input and return typed match data.
+   * Note: named groups inside optional or alternation constructs may be undefined at runtime.
+   */
+  exec(input: string, flags?: string): TypedExec<Groups> | null {
+    const re = this.toRegExp(flags);
+    return re.exec(input) as unknown as TypedExec<Groups> | null;
+  }
+
+  /**
+   * Match the regex against input and return typed match data.
+   * Note: named groups inside optional or alternation constructs may be undefined at runtime.
+   */
+  match(input: string, flags?: string): TypedMatch<Groups> | null {
+    const re = this.toRegExp(flags);
+    return input.match(re) as unknown as TypedMatch<Groups> | null;
+  }
+
+  /**
+   * Iterate over all matches in the input. Ensures the global flag is present.
+   * Note: named groups inside optional or alternation constructs may be undefined at runtime.
+   */
+  matchAll(input: string, flags?: string): TypedMatch<Groups>[] {
+    const resolvedFlags = flags ?? this.storedFlags;
+    const finalFlags = resolvedFlags && !resolvedFlags.includes("g") ? resolvedFlags + "g" : resolvedFlags || "g";
+    const re = new RegExp(this.toString(), finalFlags);
+    return Array.from(input.matchAll(re)) as unknown as TypedMatch<Groups>[];
+  }
+
+  /** Replace the first match (or all matches, with the global flag) in the input string. */
+  replace(input: string, replacement: ReplaceValue, flags?: string): string {
+    const re = this.toRegExp(flags);
+    return typeof replacement === "string"
+      ? input.replace(re, replacement)
+      : input.replace(re, replacement);
+  }
+
+  /** Replace all matches in the input string (ensures the global flag). */
+  replaceAll(input: string, replacement: ReplaceValue, flags?: string): string {
+    const resolvedFlags = flags ?? this.storedFlags;
+    const finalFlags =
+      resolvedFlags && !resolvedFlags.includes("g")
+        ? resolvedFlags + "g"
+        : resolvedFlags || "g";
+    const re = new RegExp(this.toString(), finalFlags);
+    return typeof replacement === "string"
+      ? input.replace(re, replacement)
+      : input.replace(re, replacement);
+  }
+
+  /** Split the input string by matches. */
+  split(input: string, flags?: string): string[] {
+    const re = this.toRegExp(flags);
+    return input.split(re);
+  }
 }
 
 /** Create a new regex builder. */
-export function regex(): Builder {
+export function regex(): Builder<never> {
   return new Builder();
 }
