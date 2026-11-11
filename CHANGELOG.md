@@ -1,3 +1,10 @@
+# [2.3.0](https://github.com/chetanbasuray/shorol/compare/v2.2.0...v2.3.0) (2026-10-06)
+
+
+### Features
+
+* typed named-capture groups, consumption helpers, and unicodeProperty u-flag fix ([#179](https://github.com/chetanbasuray/shorol/issues/179)) ([2e3fa03](https://github.com/chetanbasuray/shorol/commit/2e3fa0343331c5ee95ba8d20246250bd91d15a6c))
+
 # [2.2.0](https://github.com/chetanbasuray/shorol/compare/v2.1.8...v2.2.0) (2026-08-11)
 
 
