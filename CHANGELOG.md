@@ -1,3 +1,9 @@
+## [2.3.1](https://github.com/chetanbasuray/shorol/compare/v2.3.0...v2.3.1) (2026-11-20)
+
+### Bug Fixes
+
+* **pkg:** give CommonJS consumers the .d.cts type declarations ([#213](https://github.com/chetanbasuray/shorol/issues/213)) ([91b25a3](https://github.com/chetanbasuray/shorol/commit/91b25a343a3c5cf003e1a3f26f9bb29d09ef0d2e)), closes [#205](https://github.com/chetanbasuray/shorol/issues/205)
+
 # [2.3.0](https://github.com/chetanbasuray/shorol/compare/v2.2.0...v2.3.0) (2026-10-06)
 
 
