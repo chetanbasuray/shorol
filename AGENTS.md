@@ -50,7 +50,9 @@ PRs to `main` must come from one of these prefixes (enforced by the Merge Policy
 ## Pull request requirements
 
 - All status checks must pass: `Lint`, `CI` (Node 20 and 22), `Code Coverage`, `Doc Sync`,
-  `Commitlint (PR)`, `CVE Check`, `Merge Policy`.
+  `Commitlint (PR)`, `PR Title`, `CVE Check`, `Merge Policy`.
+- **The PR title must be a Conventional Commit.** PRs are squash-merged, so the title becomes the
+  commit on `main` that decides the release. The `PR Title` check lints it.
 - Update tests for any behavior change; keep coverage at 100%.
 - Keep public API docs in sync (`docs:sync` checks `docs/api-signatures.md` against `src/`).
 - Do not enable auto-merge.
