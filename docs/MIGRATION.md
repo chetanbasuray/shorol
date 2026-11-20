@@ -1,3 +1,46 @@
+# Migration Guide: 2.x to 3.x
+
+Version 3.0.0 fixes builder bugs that silently produced the wrong pattern. Each fix changes the result of some chains that 2.x accepted, so per the [versioning policy](../FEATURES.md#versioning-policy) they ship together as a major release. If your code does not hit one of the paths below, no changes are needed.
+
+## The `u` flag is added wherever the pattern needs it
+
+In 2.x, `unicodeProperty()` added the `u` flag only to the builder it was called on, so it was lost in three cases:
+
+- inside `group`, `namedGroup`, `nonCapture`, the lookarounds, `or()` and `oneOf()`;
+- after `flags(...)`, which replaced the stored flags;
+- when a `flags` argument was passed to `toRegExp`, `matches`, `exec`, `match`, `matchAll`, `replace`, `replaceAll` or `split`.
+
+Without `u`, JavaScript reads `\p{L}` as the literal text `p{L}`. `anyOf`, `noneOf` and `range` with characters above U+FFFF (emoji, for example) also never added `u`, so the class was split into surrogate halves.
+
+In 3.x, the builder remembers that the pattern needs unicode mode and adds `u` to whatever flags are used, unless they already contain `u` or `v`.
+
+```ts
+// 2.x: flags "", matches the text "p{L}" but not "x"
+// 3.x: flags "u", matches "x"
+regex()
+  .group((g) => g.unicodeProperty("L"))
+  .toRegExp();
+
+// 2.x: flags "g";  3.x: flags "gu"
+regex().unicodeProperty("L").flags("g").toRegExp();
+
+// 2.x: throws "Range out of order in character class";  3.x: matches "😁"
+regex().range("😀", "😃").toRegExp();
+```
+
+Patterns without unicode properties or astral characters are unchanged.
+
+## `range()` checks bound order
+
+In 2.x, `range("z", "a")` was accepted and only failed later, inside `toRegExp()`. In 3.x, `range()` throws straight away.
+
+```ts
+// 3.x: throws "range(from, to) requires from to be at or before to"
+regex().range("z", "a");
+```
+
+---
+
 # Migration Guide: 1.x to 2.x
 
 Version 2.0.0 tightened builder validation and changed some output formatting. All five changes below throw at build time in 2.x where 1.x either allowed the call silently or produced a different string. If your code is not hitting one of these paths, no changes are needed.

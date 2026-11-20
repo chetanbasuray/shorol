@@ -214,10 +214,14 @@ m?.groups.year; // string — typed as { year: string; month: string }, autocomp
 regex().digit().oneOrMore().replaceAll("a12b34", "#"); // "a#b#" (replaceAll adds the global flag)
 ```
 
-`unicodeProperty()` now enables the `u` flag automatically, so `\p{...}` matches as intended:
+`unicodeProperty()` enables the `u` flag automatically, so `\p{...}` matches as intended. The flag
+is kept inside groups, lookarounds and alternations, and alongside any flags you pass. Character
+classes with characters above U+FFFF (emoji) enable it too:
 
 ```ts
 regex().unicodeProperty("L").oneOrMore().matches("héllo"); // true
+regex().group((g) => g.unicodeProperty("L")).flags("g").toRegExp().flags; // "gu"
+regex().range("😀", "😃").matches("😁"); // true
 ```
 
 ## Example Gallery (Recipes)
