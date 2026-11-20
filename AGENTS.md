@@ -14,8 +14,10 @@ so following them is what gets your change merged and released cleanly.
 2. **Releases are automatic on merge to `main`.** Merging a PR that contains a releasing
    commit publishes a new version to npm and creates a GitHub release/tag. There is no
    manual step, so get the commit type right.
-3. **Never hand-edit the version or changelog.** `package.json` `version` and `CHANGELOG.md`
-   are owned by `semantic-release`. Do not bump them in a PR.
+3. **Never set the version by hand.** `package.json` `version` stays `0.0.0-development`;
+   `semantic-release` sets the real version at publish time from git tags. Release notes go to
+   GitHub Releases. `CHANGELOG.md` is frozen history up to 2.3.2. Nothing is committed back to
+   `main` after a release.
 4. **Keep it zero-dependency at runtime.** No `dependencies` in `package.json`. Dev
    dependencies are fine.
 5. **Tests and types must stay green.** Coverage is enforced at 100% and TypeScript runs in
