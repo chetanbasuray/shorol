@@ -162,8 +162,8 @@ const lowerAZ = regex().range("a", "z").oneOrMore().toRegExp();
 
 ```ts
 const password = regex()
-  .lookahead((b) => b.any().oneOrMore().digit())
-  .lookahead((b) => b.any().oneOrMore().anyOf("!@#$"))
+  .lookahead((b) => b.any().zeroOrMore().digit())
+  .lookahead((b) => b.any().zeroOrMore().anyOf("!@#$"))
   .any()
   .oneOrMore()
   .toRegExp();

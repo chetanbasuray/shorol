@@ -71,7 +71,7 @@ npm run docs:sync    # verify docs/api-signatures.md matches src/
 
 ## Project constraints
 
-- **Runtime:** zero dependencies; Node `>=18`; ships ESM + CJS + type declarations.
+- **Runtime:** zero dependencies; Node `>=20`; ships ESM + CJS + type declarations.
 - **Source of truth for versioning:** git tags (via `semantic-release`), not `package.json`.
 - **Scope:** a readable regex builder. New builder methods are welcome as `feat:`; keep the
   emitted patterns correct and the output readable.

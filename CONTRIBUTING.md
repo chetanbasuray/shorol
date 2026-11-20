@@ -11,10 +11,13 @@ Thanks for your interest in contributing!
 5. Ensure your commits follow Conventional Commits (used for automated releases).
 6. Open a pull request with a clear description of the change.
 
-## Release Branch Policy
+## Branch Policy
 
-- PRs to `main` must come from `release/*` or `hotfix/*` branches.
-- Feature work should target the active release branch (e.g. `release/1.9.x`).
+- Open pull requests against `main`.
+- The branch name must start with one of `release/`, `hotfix/`, `dependabot/`, `fix/`, `bugfix/`,
+  `chore/`, `feat/` or `docs/`. The `Merge Policy` check enforces this.
+- PRs are squash-merged and the PR title becomes the commit on `main`, so the title must be a
+  Conventional Commit. It decides the release (see [AGENTS.md](./AGENTS.md)).
 
 ## Versioning Policy
 
