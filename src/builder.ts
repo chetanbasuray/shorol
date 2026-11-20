@@ -20,6 +20,11 @@ function escapeCharClass(input: string): string {
   return input.replace(/[\\\]\-^]/g, "\\$&");
 }
 
+function hasAstral(input: string): boolean {
+  // A code point above U+FFFF spreads into a two-unit string.
+  return [...input].some((ch) => ch.length > 1);
+}
+
 function normalizeChars(chars: string | string[]): string {
   if (typeof chars === "string") {
     return chars;
@@ -75,6 +80,22 @@ export class Builder<Groups extends string = never> {
   private lastTokenLazy = false;
   private storedFlags?: string;
   private lastTokenQuantified = false;
+  // Set by tokens that only work in unicode mode; kept separate from user flags so flags() cannot drop it.
+  private requiresUnicode = false;
+
+  private adopt<G extends string>(child: Builder<G>): void {
+    if (child.requiresUnicode) {
+      this.requiresUnicode = true;
+    }
+  }
+
+  private resolveFlags(flags?: string): string | undefined {
+    const resolved = flags ?? this.storedFlags;
+    if (!this.requiresUnicode || resolved?.includes("u") || resolved?.includes("v")) {
+      return resolved;
+    }
+    return `${resolved ?? ""}u`;
+  }
 
   private ensureCanAdd(): void {
     if (this.ended) {
@@ -166,6 +187,9 @@ export class Builder<Groups extends string = never> {
       throw new Error("anyOf(chars) requires at least one character");
     }
     const escaped = escapeCharClass(raw);
+    if (hasAstral(raw)) {
+      this.requiresUnicode = true;
+    }
     return this.addToken(`[${escaped}]`, `any of these characters: "${raw}"`);
   }
 
@@ -179,6 +203,9 @@ export class Builder<Groups extends string = never> {
       throw new Error("noneOf(chars) requires at least one character");
     }
     const escaped = escapeCharClass(raw);
+    if (hasAstral(raw)) {
+      this.requiresUnicode = true;
+    }
     return this.addToken(`[^${escaped}]`, `none of these characters: "${raw}"`);
   }
 
@@ -191,6 +218,12 @@ export class Builder<Groups extends string = never> {
       throw new Error(
         "range(from, to) requires each bound to be exactly one code point"
       );
+    }
+    if (Number(from.codePointAt(0)) > Number(to.codePointAt(0))) {
+      throw new Error("range(from, to) requires from to be at or before to");
+    }
+    if (hasAstral(from + to)) {
+      this.requiresUnicode = true;
     }
     const escapedFrom = escapeCharClass(from);
     const escapedTo = escapeCharClass(to);
@@ -253,6 +286,7 @@ export class Builder<Groups extends string = never> {
   /** Add a capturing group built by the provided callback. */
   group<G extends string = never>(fn: (b: Builder) => Builder<G>): Builder<Groups | G> {
     const child = fn(new Builder());
+    this.adopt(child);
     this.addToken(
       `(${child.toString()})`,
       `a group containing (${joinExplanations(child.descriptions)})`
@@ -267,6 +301,7 @@ export class Builder<Groups extends string = never> {
   ): Builder<Groups | Name | G> {
     assertValidGroupName(name);
     const child = fn(new Builder());
+    this.adopt(child);
     this.addToken(
       `(?<${name}>${child.toString()})`,
       `a named group "${name}" containing (${joinExplanations(child.descriptions)})`
@@ -277,6 +312,7 @@ export class Builder<Groups extends string = never> {
   /** Add a non-capturing group `(?:...)`. */
   nonCapture<G extends string = never>(fn: (b: Builder) => Builder<G>): Builder<Groups | G> {
     const child = fn(new Builder());
+    this.adopt(child);
     this.addToken(
       `(?:${child.toString()})`,
       `the sequence (${joinExplanations(child.descriptions)})`
@@ -287,6 +323,7 @@ export class Builder<Groups extends string = never> {
   /** Add a positive lookahead `(?=...)`. */
   lookahead<G extends string = never>(fn: (b: Builder) => Builder<G>): Builder<Groups | G> {
     const child = fn(new Builder());
+    this.adopt(child);
     this.addToken(
       `(?=${child.toString()})`,
       `followed by (${joinExplanations(child.descriptions)})`
@@ -297,6 +334,7 @@ export class Builder<Groups extends string = never> {
   /** Add a negative lookahead `(?!...)`. */
   negativeLookahead<G extends string = never>(fn: (b: Builder) => Builder<G>): Builder<Groups | G> {
     const child = fn(new Builder());
+    this.adopt(child);
     this.addToken(
       `(?!${child.toString()})`,
       `not followed by (${joinExplanations(child.descriptions)})`
@@ -307,6 +345,7 @@ export class Builder<Groups extends string = never> {
   /** Add a positive lookbehind `(?<=...)`. */
   lookbehind<G extends string = never>(fn: (b: Builder) => Builder<G>): Builder<Groups | G> {
     const child = fn(new Builder());
+    this.adopt(child);
     this.addToken(
       `(?<=${child.toString()})`,
       `preceded by (${joinExplanations(child.descriptions)})`
@@ -317,6 +356,7 @@ export class Builder<Groups extends string = never> {
   /** Add a negative lookbehind `(?<!...)`. */
   negativeLookbehind<G extends string = never>(fn: (b: Builder) => Builder<G>): Builder<Groups | G> {
     const child = fn(new Builder());
+    this.adopt(child);
     this.addToken(
       `(?<!${child.toString()})`,
       `not preceded by (${joinExplanations(child.descriptions)})`
@@ -341,6 +381,7 @@ export class Builder<Groups extends string = never> {
     const left = this.getToken(index);
     const leftDescription = this.getDescription(index);
     const right = fn(new Builder());
+    this.adopt(right);
     this.tokens[index] = `(?:${left}|${right.toString()})`;
     this.descriptions[index] =
       `(${leftDescription} or ${joinExplanations(right.descriptions)})`;
@@ -402,6 +443,7 @@ export class Builder<Groups extends string = never> {
       throw new Error("oneOf() requires at least two alternatives");
     }
     const built = alternatives.map((fn) => fn(new Builder()));
+    built.forEach((b) => this.adopt(b));
     const pattern = built.map((b) => b.toString()).join("|");
     const description = built
       .map((b) => joinExplanations(b.descriptions))
@@ -441,6 +483,7 @@ export class Builder<Groups extends string = never> {
         `a character with the Unicode property "${name}=${value}"`
       );
       this.appendFlag("u");
+      this.requiresUnicode = true;
       return this;
     }
     this.addToken(
@@ -448,6 +491,7 @@ export class Builder<Groups extends string = never> {
       `a character with the Unicode property "${name}"`
     );
     this.appendFlag("u");
+    this.requiresUnicode = true;
     return this;
   }
 
@@ -567,13 +611,13 @@ export class Builder<Groups extends string = never> {
     next.lastTokenLazy = this.lastTokenLazy;
     next.storedFlags = this.storedFlags;
     next.lastTokenQuantified = this.lastTokenQuantified;
+    next.requiresUnicode = this.requiresUnicode;
     return next as unknown as Builder<Groups>;
   }
 
   /** Build a native `RegExp`, using passed flags or stored flags. */
   toRegExp(flags?: string): RegExp {
-    const finalFlags = flags ?? this.storedFlags;
-    return new RegExp(this.toString(), finalFlags);
+    return new RegExp(this.toString(), this.resolveFlags(flags));
   }
 
   /** Test the built `RegExp` against input. */
@@ -613,7 +657,7 @@ export class Builder<Groups extends string = never> {
    * Note: named groups inside optional or alternation constructs may be undefined at runtime.
    */
   matchAll(input: string, flags?: string): TypedMatch<Groups>[] {
-    const resolvedFlags = flags ?? this.storedFlags;
+    const resolvedFlags = this.resolveFlags(flags);
     const finalFlags = resolvedFlags && !resolvedFlags.includes("g") ? resolvedFlags + "g" : resolvedFlags || "g";
     const re = new RegExp(this.toString(), finalFlags);
     return Array.from(input.matchAll(re)) as unknown as TypedMatch<Groups>[];
@@ -629,7 +673,7 @@ export class Builder<Groups extends string = never> {
 
   /** Replace all matches in the input string (ensures the global flag). */
   replaceAll(input: string, replacement: ReplaceValue, flags?: string): string {
-    const resolvedFlags = flags ?? this.storedFlags;
+    const resolvedFlags = this.resolveFlags(flags);
     const finalFlags =
       resolvedFlags && !resolvedFlags.includes("g")
         ? resolvedFlags + "g"
