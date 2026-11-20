@@ -1,3 +1,9 @@
+## [2.3.2](https://github.com/chetanbasuray/shorol/compare/v2.3.1...v2.3.2) (2026-11-20)
+
+### Bug Fixes
+
+* **pkg:** share one copy of Builder and the presets between entry points ([#217](https://github.com/chetanbasuray/shorol/issues/217)) ([62a1fe1](https://github.com/chetanbasuray/shorol/commit/62a1fe19186ca0c007dbc806c722fce559a7f6af)), closes [#206](https://github.com/chetanbasuray/shorol/issues/206)
+
 ## [2.3.1](https://github.com/chetanbasuray/shorol/compare/v2.3.0...v2.3.1) (2026-11-20)
 
 ### Bug Fixes
