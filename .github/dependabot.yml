@@ -11,6 +11,11 @@ updates:
       semver-major-days: 14
       semver-minor-days: 7
       semver-patch-days: 3
+    ignore:
+      # Preset v10 needs conventional-changelog-writer 9; @semantic-release/release-notes-generator
+      # still ships writer 8, so v10 breaks release notes. Remove once the generator moves to writer 9.
+      - dependency-name: "conventional-changelog-conventionalcommits"
+        versions: [">=10.0.0"]
     groups:
       minor-and-patch:
         patterns:
